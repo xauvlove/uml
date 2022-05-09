@@ -1,9 +1,18 @@
 @startuml
+
 'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
 hide footbox
 
+'使用 toy 主题
+!theme toy
+
+'自动激活
 autoActivate on
-autonumber
+
+'编号
+autonumber 1
 
 '隐藏孤立的参与者
 hide unlinked
@@ -14,13 +23,13 @@ skinparam sequenceMessageAlign left
 '箭头粗度
 skinparam sequenceArrowThickness 2
 
-!theme toy
+' 皮肤
 skinparam sequence {
-LifeLineBackgroundColor #6FC8F2
-ParticipantBackgroundColor #6FC8F2
-ParticipantFontColor black
-ActorBackgroundColor #6FC8F2
-ActorFontColor black
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
 }
 
 actor 用户 as user

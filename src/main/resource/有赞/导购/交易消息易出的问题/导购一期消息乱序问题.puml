@@ -1,13 +1,8 @@
 @startuml
 'https://plantuml.com/sequence-diagram
 
-!include ../../../puml-theme-aws-orange.puml
+!theme toy
 hide footbox
-skinparam backgroundColor #EEEBDC
-
-skinparam sequence {
-    LifeLineBackgroundColor grey
-}
 
 autonumber
 
