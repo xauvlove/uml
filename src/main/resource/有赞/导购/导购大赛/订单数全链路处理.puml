@@ -1,0 +1,100 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+
+Participant NsqClient as client
+Participant ShoppingGuideOrderListener as ShoppingGuideOrderListener
+Participant ShoppingGuideOrderProcessor as ShoppingGuideOrderProcessor
+Participant CompeteActivityOrderListener as CompeteActivityOrderListener
+Participant CompeteActivityOrderProcessor as CompeteActivityOrderProcessor
+Participant CompeteActivityOrderItemListener as CompeteActivityOrderItemListener
+Participant CompeteActivityOrderItemProcessor as CompeteActivityOrderItemProcessor
+Participant CompeteOrderMetricsCalculateDomainService as CompeteOrderMetricsCalculateDomainService
+Participant CompeteActivityProcessorAdapter as CompeteActivityProcessorAdapter
+
+Participant NsqServer as NsqServer
+
+client -> ShoppingGuideOrderListener : 监听业绩消息
+note right client
+    topic:guide_achievement_order_pay
+    channel:guide_achievement_order_compete
+end note
+ShoppingGuideOrderListener -> ShoppingGuideOrderProcessor : process
+ShoppingGuideOrderProcessor -> ShoppingGuideOrderProcessor : 查有效活动 List<Activity>
+return
+ShoppingGuideOrderProcessor -> NsqServer : 对每个活动发消息，每个活动异步执行【活动分裂】
+note right ShoppingGuideOrderProcessor
+    topic:compete_activity_order
+end note
+return
+return
+return
+
+client -> CompeteActivityOrderListener : 监听活动分裂消息
+note right client
+    topic:compete_activity_order
+    channel:compete_activity_order_division
+end note
+CompeteActivityOrderListener -> CompeteActivityOrderProcessor : process
+CompeteActivityOrderProcessor -> CompeteActivityOrderProcessor : get or create 活动相关指标
+return
+
+CompeteActivityOrderProcessor -> CompeteActivityOrderProcessor : 找出订单数PK奖项 List<ActivityItem>
+return
+
+CompeteActivityOrderProcessor -> NsqServer : 对每个订单数PK奖项，每个奖项异步执行【奖项分裂】
+note right CompeteActivityOrderProcessor
+    topic:compete_activity_order_item
+end note
+return
+return
+return
+
+client -> CompeteActivityOrderItemListener : 监听奖项分裂消息
+note right client
+    topic:compete_activity_order_item
+    channel:compete_activity_order_item_cnn
+end note
+
+CompeteActivityOrderItemListener -> CompeteActivityOrderItemProcessor : 处理奖项消息
+CompeteActivityOrderItemProcessor -> CompeteActivityOrderItemProcessor : 数据准备
+note right CompeteActivityOrderItemProcessor
+    1.准备指标数据
+    2.准备幂等数据
+end note
+return
+CompeteActivityOrderItemProcessor -> CompeteOrderMetricsCalculateDomainService : 计算指标并持久化
+return
+CompeteActivityOrderItemProcessor -> CompeteActivityProcessorAdapter : 发出排行指标消息用于排行榜更新
+return
+CompeteActivityOrderItemProcessor -> CompeteOrderMetricsCalculateDomainService : 计算全员开单[订单数]
+return
+
+return
+return
+
+
+
+@enduml

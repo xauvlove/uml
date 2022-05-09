@@ -1,0 +1,27 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+'top to bottom direction替换为left to right direction
+
+skinparam backgroundColor #EEEBDC
+
+skinparam sequence {
+    LifeLineBackgroundColor grey
+}
+
+top to bottom direction
+
+package 导购任务类型 {
+
+    node 任务类型 {
+         [导购回访任务]
+         [CRM回访任务]
+         [批量加好友任务]
+         [商城老客加好友任务]
+         [商城新客加好友任务]
+         [朋友圈任务]
+    }
+}
+
+
+
+@enduml

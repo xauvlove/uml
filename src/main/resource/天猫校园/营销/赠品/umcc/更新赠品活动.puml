@@ -1,0 +1,50 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+participant 创纪云 as saas
+participant ShopGiftService as shopGiftService
+participant MarketingActivityAssembler as marketingActivityAssembler
+participant ActivityBuilder as activityBuilder
+participant ActivityBuyLimitBuilder as activityBuyLimitBuilder
+participant UmccWrapper as umccWrapper
+
+
+saas -> shopGiftService : 更新活动
+
+
+shopGiftService -> marketingActivityAssembler : 转换内部模型
+return
+
+shopGiftService -> activityBuilder : 构建活动数据
+return
+
+shopGiftService -> activityBuyLimitBuilder : 构建活动限购数据
+return
+
+shopGiftService -> umccWrapper : umcc 侧更新活动
+return
+return
+
+@enduml

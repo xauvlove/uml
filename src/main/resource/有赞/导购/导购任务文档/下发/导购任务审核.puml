@@ -1,0 +1,20 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+
+    : 任务创建消息;
+    : auditTask();
+    if (taskType == 导购任务) then(yes)
+        : 任务审核直接通过;
+    else(no)
+        if(开启自动审核) then(yes)
+            : 任务审核通过;
+        else(no)
+            : 等待管理员审核;
+        endif
+    endif
+    : 发送审核完成消息;
+stop
+
+@enduml

@@ -1,0 +1,71 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+
+actor "admin" as admin
+'Participant NsqClient as nsqClient
+Participant task_define as td
+Participant task_define_child as tdc
+Participant task_define_department as tdd
+Participant task_define_department_relation as tddr
+Participant task_visit_content as tvc
+
+Participant shopping_guide_task as sgt
+Participant shopping_guide_task_visit_data as sgtvd
+
+td -> sgt : 拉取基本数据
+note left
+    belong_version = 1
+    execute_status = ? (10,20,30,40)
+    description = remark
+    source_from = SYSTEM_TRANSFER
+    task_source = SHOPPING_GUIDE
+    delete = delete
+
+    hq_kdt_id = ${department_id}
+    kdt_id = hq_kdt_id
+end note
+
+tdc -> sgtvd : 拉取回访内容
+note left
+    TextContent = ${text}
+    ImageContent = ${image}
+    MiniProgramContent = ${mini}
+    LinkContent = ${link}
+
+    search_content = ${search_content}
+end note
+
+tdd -> sgt : 拉取下发数据
+note left
+    根据 root_task_id 查询所有任务
+    根据 parent_department_id 和 department_id 构建下发数据
+end note
+
+tdd -> sgtr : 使用上面数据构建
+note left
+    使用上面数据构建
+end note
+@enduml

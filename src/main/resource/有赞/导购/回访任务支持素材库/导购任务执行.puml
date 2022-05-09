@@ -1,0 +1,63 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+Participant 企微
+Participant 导购工作台
+Participant 客户
+Participant 前端
+Participant 交易
+Participant 导购任务
+Participant 埋点sdk
+Participant 大数据
+
+企微 -> 导购工作台 : 发送一个群发消息任务
+
+导购工作台 -> 客户 : 发送消息，带 task_short_code
+note left
+    1.图片：自定义图片无法拼接 task_short_code
+    2.链接：可直接带 task_short_code
+    3.小程序：可利用载体 url_param 带 task_short_code
+    4.文本：可拼接 一个商品链接，商品链接带 task_short_code
+    5.素材中心图片：图片二维码带 task_short_code
+end note
+
+客户 -> 前端 : 点击链接/扫描图片二维码 进入商城购买商品
+
+前端 -> 埋点sdk : PV UV 统计调用
+
+埋点sdk -> 大数据 : 消费 kafka 统计 PV UV
+
+前端 -> 交易 : 拼接 from-params 的 task_short_code 参数下单支付
+
+交易 o->o 导购任务 : 接收带短码的订单业绩消息
+
+导购任务 -> 导购任务 : 采集订单数据
+
+导购任务 -> 大数据 : 发送消息
+
+大数据 -> 大数据 : 统计订单数据
+
+
+@enduml

@@ -1,0 +1,75 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+actor 用户 as user
+participant 前端 as front
+participant StudentIdentificationService as studentIdentificationService
+participant BigData as bigData
+participant ImageRecognitionService as imageRecognitionService
+participant OcrApiClient as ocrApiClient
+
+group fail
+    user -> front : 上传学生证照片
+
+    front -> studentIdentificationService : 调用学生认证服务
+
+    studentIdentificationService -> bigData : 调用大数据服务，推断用户是否为学生
+    return 不是学生
+
+    studentIdentificationService --> front : 推断不是学生，直接返回
+    note right of studentIdentificationService
+        学生包括：大学生和非大学学生
+        非学生：既不是大学生也不是其他学生
+    end note
+    return
+end group
+
+group success
+    user -> front : 上传学生证照片
+
+        front -> studentIdentificationService : 调用学生认证服务
+
+        studentIdentificationService -> bigData : 调用大数据服务，推断用户是否为学生
+        return 是学生
+
+    studentIdentificationService -> imageRecognitionService: 调用图片识别服务
+    note right of studentIdentificationService
+        params :
+            url
+    end note
+
+    imageRecognitionService -> ocrApiClient: 调用 ocr api
+    return
+    return
+
+    studentIdentificationService -> studentIdentificationService : 检查返回字段是否符合要求
+    note right of studentIdentificationService
+        检查是否包含：姓名、籍贯、学号等类似字段
+    end note
+    return
+    return
+    return
+end group
+@enduml

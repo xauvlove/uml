@@ -1,0 +1,54 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+'top to bottom direction替换为left to right direction
+
+skinparam backgroundColor #EEEBDC
+
+
+left to right direction
+
+package 模块 {
+
+  node 任务 {
+        [任务管理]
+        [任务审核]
+        [任务批次]
+        [任务下发]
+        [任务权限]
+        [任务统计]
+  }
+  node 导购个人任务 {
+      [任务创建]
+      [任务开始]
+      [任务结束]
+      [任务更新]
+      [任务催办]
+  }
+  node 部门任务 {
+       [部门任务下发]
+       [部门任务催办]
+  }
+  node 任务状态消息 {
+     [任务创建完成]
+     [任务审核完成]
+     [任务分配完成]
+     [任务开始完成]
+     [任务暂停完成]
+     [任务结束完成]
+     [任务删除完成]
+  }
+  node 外部组件 {
+      [nsq]
+      [bond]
+      [dts]
+      [kv]
+      [march]
+      [tsp]
+      [apollo]
+      [db]
+  }
+}
+
+
+
+@enduml

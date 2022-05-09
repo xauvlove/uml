@@ -1,0 +1,100 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+
+Participant NsqClient as client
+Participant ShoppingGuideAddQwFriendsListener as ShoppingGuideAddQwFriendsListener
+Participant CompeteActivityAddQwFriendsListener as CompeteActivityAddQwFriendsListener
+Participant CompeteActivityAddQwFriendsProcessor as CompeteActivityAddQwFriendsProcessor
+Participant CompeteActivityAddQwFriendsItemListener as CompeteActivityAddQwFriendsItemListener
+Participant CompeteActivityAddQwFriendsItemProcessor as CompeteActivityAddQwFriendsItemProcessor
+Participant CompeteQwMetricsCalculateDomainService as CompeteQwMetricsCalculateDomainService
+Participant CompeteActivityProcessorAdapter as CompeteActivityProcessorAdapter
+
+Participant NsqServer as NsqServer
+
+client -> ShoppingGuideAddQwFriendsListener : 监听企微加好友消息
+note right client
+    topic:wecom_open_customer_rel_incr_add
+    channel:shopping_guide_wecom_user_customer_rel_add
+end note
+
+ShoppingGuideAddQwFriendsListener -> ShoppingGuideAddQwFriendsListener : 查有效活动 List<Activity>
+return
+ShoppingGuideAddQwFriendsListener -> NsqServer : 对每个活动发消息，每个活动异步执行【活动分裂】
+note right ShoppingGuideAddQwFriendsListener
+    topic:compete_activity_qw_add_friends
+end note
+return
+return
+
+client -> CompeteActivityAddQwFriendsListener : 监听活动分裂消息
+note right client
+    topic:compete_activity_qw_add_friends
+    channel:compete_activity_wecom_user_customer_rel_add
+end note
+
+
+CompeteActivityAddQwFriendsListener -> CompeteActivityAddQwFriendsListener : get or create 活动相关指标
+return
+
+CompeteActivityAddQwFriendsListener -> CompeteActivityAddQwFriendsProcessor : 找出拉新奖项 List<ActivityItem>
+return
+
+CompeteActivityAddQwFriendsListener -> NsqServer : 对每个拉新奖项，每个奖项异步执行【奖项分裂】
+note right CompeteActivityAddQwFriendsListener
+    topic:compete_activity_qw_add_friends_item
+end note
+return
+return
+
+client -> CompeteActivityAddQwFriendsItemListener : 监听奖项分裂消息
+note right client
+    topic:compete_activity_qw_add_friends_item
+    channel:compete_activity_wecom_customer_rel_add_item
+end note
+
+CompeteActivityAddQwFriendsItemListener -> CompeteActivityAddQwFriendsItemProcessor : 处理奖项消息
+group Bond分布式锁定
+    CompeteActivityAddQwFriendsItemProcessor -> CompeteActivityAddQwFriendsItemProcessor : 数据准备
+    note right CompeteActivityAddQwFriendsItemProcessor
+        1.准备指标数据
+        2.准备幂等数据
+    end note
+    return
+    CompeteActivityAddQwFriendsItemProcessor -> CompeteQwMetricsCalculateDomainService : 计算指标并持久化
+    return
+    CompeteActivityAddQwFriendsItemProcessor -> CompeteActivityProcessorAdapter : 发出排行指标消息用于排行榜更新
+    return
+    CompeteActivityAddQwFriendsItemProcessor -> CompeteQwMetricsCalculateDomainService : 计算全员拉新
+    return
+end
+
+return
+return
+
+
+
+@enduml

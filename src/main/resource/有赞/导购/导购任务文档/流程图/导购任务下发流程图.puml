@@ -1,0 +1,16 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+
+    : 任务开始消息;
+    : assignTask();
+    : 加锁，一个部门下发时，禁止其他部门下发;
+    : 下发策略选择器;
+    : 下发任务;
+    : 保存下发结果;
+    : 发下发完成消息;
+
+stop
+
+@enduml

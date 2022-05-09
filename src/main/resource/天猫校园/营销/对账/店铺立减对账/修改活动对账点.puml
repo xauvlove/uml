@@ -1,0 +1,23 @@
+@startuml
+
+left to right direction
+
+usecase 修改活动 as activity
+
+usecase 新建活动活动对账点 as new
+usecase 商品个数 as num
+usecase 定价方式_一口价价格 as price
+usecase 每个部门总限量 as sellLimitNum
+usecase 每个部门每天限量 as sellLimitNumDaily
+usecase 补偿方式 as compensatedMode
+usecase 特供价 as cPrice
+
+activity --> new
+activity --> num
+activity --> price
+activity --> sellLimitNum
+activity --> sellLimitNumDaily
+activity --> compensatedMode
+activity --> cPrice
+
+@enduml

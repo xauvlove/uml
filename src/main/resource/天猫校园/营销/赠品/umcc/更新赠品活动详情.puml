@@ -1,0 +1,55 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+
+participant 创纪云 as saas
+participant ShopGiftService as ShopGiftService
+participant MarketingDetailAssembler as MarketingDetailAssembler
+participant UmpActivityDetailFactory as UmpActivityDetailFactory
+participant UmccWrapper as UmccWrapper
+
+saas -> ShopGiftService: 新增赠品活动详情
+
+ShopGiftService -> MarketingDetailAssembler : 模型转换，转换为校园内部模型
+return
+
+ShopGiftService -> UmccWrapper : 从 umcc 获取一个分组 id
+return
+
+ShopGiftService -> UmpActivityDetailFactory : 根据模型创建赠品活动详情
+return
+
+loop for i in 1..n
+    ShopGiftService -> UmccWrapper : 写入 umcc
+return
+end loop
+
+ShopGiftService -> UmccWrapper : 删除原来 umcc 分组
+return
+
+
+return
+
+@enduml

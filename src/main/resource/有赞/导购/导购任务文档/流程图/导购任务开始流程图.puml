@@ -1,0 +1,22 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+
+    : 任务下发消息或者管理员点击立即开始任务;
+    : startTask();
+    if (是否手动点击开始) then (yes)
+        : 任务流转至 进行中;
+    else(no)
+        if (是否到达任务开始时间) then (yes)
+            : 任务流转至 进行中;
+        else(no)
+            : 创建 TSP 任务，延迟开始任务;
+        endif
+    endif
+    : 任务状态流转;
+    : 发任务开始消息;
+
+stop
+
+@enduml

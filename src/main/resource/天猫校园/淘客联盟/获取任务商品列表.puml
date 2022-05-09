@@ -1,0 +1,66 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+
+autoActivate on
+autonumber
+!theme toy
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #6FC8F2
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #6FC8F2
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #6FC8F2
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+actor 用户 as user
+participant isv前端 as front
+participant 兑吧 as out
+participant 校园 as tmxy
+participant 阿里妈妈 as Alimama
+database TKUserTaskItemRepository as TKUserTaskItemRepository
+
+user -> front : 查看任务
+
+front -> out : 查询商品
+
+out -> tmxy : 查询推荐商品，pageSize = topNum
+
+group 置顶商品逻辑
+    loop for i in 1..n
+        tmxy -> TKUserTaskItemRepository : 查询过往浏览过的商品列表 list
+        return
+    end loop
+
+    loop for num in 0...size
+    tmxy -> Alimama : 查询推荐商品
+    return
+    tmxy -> tmxy : 过滤商品列表，num = num + filter(num)
+    note right of tmxy
+        以往浏览的商品，过滤
+    end note
+    return
+    end loop
+    tmxy -> tmxy : 组装商品，商品打标
+    note right of tmxy
+        今天浏览的商品，置灰
+    end note
+    return
+end group
+
+return
+return
+return
+
+@enduml
