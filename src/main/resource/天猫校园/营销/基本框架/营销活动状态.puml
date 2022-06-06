@@ -1,0 +1,15 @@
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+skinparam backgroundColor #EEEBDC
+
+'使用 toy 主题
+!theme toy
+
+* 营销活动状态
+
+** 创建中
+** 生效中
+** 已失效【删除状态另起字段 deleted，或者不要 deleted】
+** 修改中
+
+@endmindmap

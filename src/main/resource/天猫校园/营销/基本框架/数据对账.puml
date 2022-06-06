@@ -1,0 +1,91 @@
+@startuml
+
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+!theme toy
+
+'自动激活
+autoActivate on
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 用户 as user
+participant MarketingActivityListener as MarketingActivityListener
+participant MarketingActivityConsistencyService as MarketingActivityConsistencyService
+participant MarketingActivityRepository as MarketingActivityRepository
+participant MarketingActivityConsistencyComponents as MarketingActivityConsistencyComponents
+participant MarketingActivityConsistencyMonitor as MarketingActivityConsistencyMonitor
+
+participant 创纪云 as saas
+participant MarketingActivityService as MarketingActivityService
+participant Umcc as Umcc
+
+
+user -> saas : 创建活动
+
+saas -> MarketingActivityService : 创建活动
+
+MarketingActivityService -> Umcc : 写入 ump
+return
+return
+return
+
+->o MarketingActivityListener : 接收活动创建/更新消息
+
+MarketingActivityListener -> MarketingActivityConsistencyService : 进入数据一致性检查流程
+
+MarketingActivityConsistencyService -> MarketingActivityRepository : 查询活动状态
+note right of MarketingActivityConsistencyService
+    如果活动还没有创建/修改完成
+    丢异常，消息重试，等待创建完成
+
+    设置重试次数 > 10? 或者重试时间 > 1h
+    则表示流程出现异常，需要修复代码或查问题
+end note
+return
+
+MarketingActivityConsistencyService -> saas : 拉取 saas 活动数据
+
+saas -> saas : 数据组装【最好是从数据库里面取数据】
+return
+return 返回 saas 数据
+
+MarketingActivityConsistencyService -> Umcc : 拉取 ump 数据
+return 返回 ump 数据
+
+MarketingActivityConsistencyService -> MarketingActivityConsistencyComponents : 组装 context，进入数据一致性校验组件，检查数据一致性
+return 返回 context
+
+MarketingActivityConsistencyService -> MarketingActivityConsistencyMonitor : 检查 context，发现不一致点
+note right of MarketingActivityConsistencyService
+    sls 日志记录
+    sunfire 告警
+end note
+
+return
+return
+return
+@enduml

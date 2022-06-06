@@ -1,5 +1,6 @@
 @startuml
 'https://plantuml.com/use-case-diagram
+!theme toy
 
 left to right direction
 

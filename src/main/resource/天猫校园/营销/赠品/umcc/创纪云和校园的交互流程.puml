@@ -37,10 +37,10 @@ saas -> tmxy : 发起校园活动变更
 tmxy -> tmxy : 参数转换，转换为 umcc 参数
 
 tmxy -> umcc : 写入 umcc
-return
-return
-return
-return
-return
+return 返回
+return 返回
+return 返回
+return 返回
+return 返回
 
 @enduml

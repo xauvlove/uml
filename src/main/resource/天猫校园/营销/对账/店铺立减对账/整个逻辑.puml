@@ -1,0 +1,60 @@
+@startuml
+
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+!theme toy
+
+'自动激活
+autoActivate on
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+participant ScheduleX2 as ScheduleX2
+participant 天猫校园 as tmxy
+participant 创纪云 as saas
+participant ump as ump
+participant sunfire as sunfire
+participant 钉钉 as dd
+
+ScheduleX2 -> tmxy : 30 分钟触发
+
+tmxy -> saas : 查询 24h 内发生变更的活动
+return
+
+tmxy -> ump : 查询 ump 侧活动数据
+return
+
+tmxy -> tmxy : 数据核对
+
+tmxy -> sunfire : 数据不一致，告警
+sunfire -> dd : 告警
+return 返回
+return 返回
+return 返回
+return 返回
+
+
+@enduml

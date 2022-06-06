@@ -21,7 +21,7 @@ hide unlinked
 skinparam sequenceMessageAlign left
 
 '箭头粗度
-skinparam sequenceArrowThickness 2
+skinparam sequenceArrowThickness 2.5
 
 ' 皮肤
 skinparam sequence {

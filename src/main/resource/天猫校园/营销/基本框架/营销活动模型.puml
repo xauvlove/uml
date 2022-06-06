@@ -1,0 +1,25 @@
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+skinparam backgroundColor #EEEBDC
+
+* 营销活动模型
+
+** 活动信息
+*** 名称
+*** 时间
+*** 限购
+*** ...
+
+** 活动详情
+*** 生效时间
+*** 折扣类型
+*** 圈品
+*** 排品
+
+
+
+
+
+
+
+@endmindmap

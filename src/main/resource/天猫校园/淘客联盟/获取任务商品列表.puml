@@ -6,6 +6,8 @@ skinparam backgroundColor #EEEBDC
 autoActivate on
 autonumber
 !theme toy
+skinparam sequenceArrowThickness 1.7
+
 skinparam sequence {
 ArrowColor black
 ActorBorderColor black
