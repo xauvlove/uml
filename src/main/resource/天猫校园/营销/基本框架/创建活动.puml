@@ -41,6 +41,14 @@ participant MarketingActivityRepository as MarketingActivityRepository
 participant Umcc as Umcc
 
 rnote across
+    **一个提议：**
+    将营销的数据收到校园侧，saas 前端嵌入校园自己的页面 html
+    html 请求数据数据到校园，校园通过奇门获取商品、品牌、类目等数据
+    html 创建营销活动直接将数据发送到校园，将数据收拢到校园侧
+    **可能需要大量的奇门接口**
+end note
+
+rnote across
     目标：
     1.saas 逻辑简单，流程编排简单
     2.校园接口幂等
