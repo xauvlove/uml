@@ -4,7 +4,8 @@ hide footbox
 skinparam backgroundColor #EEEBDC
 autoActivate on
 autonumber
-
+!theme toy
+title fig.all
 skinparam sequence {
 ArrowColor black
 ActorBorderColor black
