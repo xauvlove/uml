@@ -44,9 +44,9 @@ participant MarketingActivityService as MarketingActivityService
 participant Umcc as Umcc
 
 
-user -> saas : 创建活动
+user -> saas : 创建/更新活动
 
-saas -> MarketingActivityService : 创建活动
+saas -> MarketingActivityService : 创建/更新活动
 
 MarketingActivityService -> Umcc : 写入 ump
 return

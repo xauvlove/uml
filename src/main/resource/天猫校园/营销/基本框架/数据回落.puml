@@ -1,0 +1,62 @@
+@startuml
+
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+!theme toy
+
+'自动激活
+autoActivate on
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 用户 as user
+participant MarketingActivityListener as MarketingActivityListener
+participant MarketingActivityDomainService as MarketingActivityDomainService
+participant MarketingActivityRepository as MarketingActivityRepository
+
+participant 创纪云 as saas
+participant MarketingActivityService as MarketingActivityService
+participant Umcc as Umcc
+
+user -> saas : 创建/更新活动
+
+saas -> MarketingActivityService : 创建/更新活动
+
+MarketingActivityService -> Umcc : 写入 ump
+return
+return
+return
+
+->o MarketingActivityListener : 接收活动创建/更新消息
+
+MarketingActivityListener -> MarketingActivityDomainService : 写入/更新活动数据
+
+MarketingActivityDomainService -> MarketingActivityRepository : 保存DB
+return
+return
+return
+
+@enduml

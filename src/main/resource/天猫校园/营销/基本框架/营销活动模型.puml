@@ -1,6 +1,9 @@
 @startmindmap
 'https://plantuml.com/mindmap-diagram
+
 skinparam backgroundColor #EEEBDC
+'使用 toy 主题
+!theme toy
 
 * 营销活动模型
 
@@ -15,11 +18,6 @@ skinparam backgroundColor #EEEBDC
 *** 折扣类型
 *** 圈品
 *** 排品
-
-
-
-
-
 
 
 @endmindmap
