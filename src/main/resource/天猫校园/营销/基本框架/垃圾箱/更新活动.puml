@@ -81,11 +81,13 @@ return
 return
 
 saas -> MarketingActivityWriteService : 传入活动圈品
+
 MarketingActivityWriteService -> MarketingActivityRepository : 保存
 return
 return
 
 saas -> MarketingActivityWriteService : 传入活动排品
+
 MarketingActivityWriteService -> MarketingActivityRepository : 保存
 return
 return
