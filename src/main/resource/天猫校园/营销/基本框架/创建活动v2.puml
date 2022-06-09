@@ -38,6 +38,7 @@ participant MarketingActivityWriteService as MarketingActivityWriteService
 participant MarketingActivityDomainService as MarketingActivityDomainService
 participant MarketingActivitySyncService as MarketingActivitySyncService
 participant MarketingActivityAdapter as MarketingActivityAdapter
+participant MarketingActivitySyncService as MarketingActivitySyncService
 participant TmallCampusItemRepository as TmallCampusItemRepository
 participant MarketingActivityRepository as MarketingActivityRepository
 participant Umcc as Umcc
@@ -95,18 +96,21 @@ return
 saas -> MarketingActivityWriteService : 传入活动圈品信息、门店信息等
 note right of saas
     需要明确的是，圈品包括：
-    类目、品牌、商品
+    类目、品牌、tp品
 end note
 
 MarketingActivityWriteService -> TmallCampusItemRepository : 查询门店品
 return
 MarketingActivityWriteService -> MarketingActivityRepository : 保存圈品快照
+note right of MarketingActivityWriteService
+    保存的商品快照，不仅仅是门店品，还有tp品
+end note
 return
 return
 
 saas -> MarketingActivityWriteService : 传入活动排品、门店信息等
 note right of saas
-    需要明确的是，圈品包括：
+    需要明确的是，排品包括：
     类目、品牌、商品
 end note
 MarketingActivityWriteService -> TmallCampusItemRepository : 查询门店品

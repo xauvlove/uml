@@ -38,6 +38,7 @@ participant MarketingActivityWriteService as MarketingActivityWriteService
 participant MarketingActivityReadService as MarketingActivityReadService
 participant MarketingActivityDomainService as MarketingActivityDomainService
 participant MarketingActivityAdapter as MarketingActivityAdapter
+participant MarketingActivitySyncService as MarketingActivitySyncService
 participant TmallCampusItemRepository as TmallCampusItemRepository
 participant MarketingActivityRepository as MarketingActivityRepository
 participant Umcc as Umcc
@@ -88,7 +89,13 @@ return
 
 saas -> MarketingActivityWriteService : 传入活动圈品
 
+MarketingActivityWriteService -> MarketingActivityRepository : 查询上一次的数据快照[tp品/品牌/类目]
+return
+
 MarketingActivityWriteService -> MarketingActivityWriteService : 比较差异
+note right of MarketingActivityWriteService
+    比较快照数据和 saas 传过来的全量数据的快照[tp品/品牌/类目]
+end note
 return
 
 MarketingActivityWriteService -> TmallCampusItemRepository : 查询门店品
