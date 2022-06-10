@@ -67,6 +67,12 @@ return
 
 MarketingActivityDomainService -> Umcc : 查询活动状态
 return 返回活动状态?删除:未删除
+
+MarketingActivityDomainService -> MarketingActivityRepository : 修改本地活动状态
+note right of MarketingActivityDomainService
+    保证 umcc 被删除，校园侧也被删除
+end note
+return
 return
 return 删除成功
 

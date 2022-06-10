@@ -174,16 +174,16 @@ group 往 ump 写数据
         return
     end group
 
-    MarketingActivityDomainService -> MarketingActivityAdapter : 不同活动类型进对应处理器
-
     group 分布式锁
+    MarketingActivityDomainService -> MarketingActivityAdapter : 不同活动类型进对应处理器
         MarketingActivityAdapter -> Umcc : 创建活动
+        return
         return
         MarketingActivityDomainService -> MarketingActivityRepository : 设置活动状态为生效中
         return
     end group
     return
-    return
+
 end group
 
 group 数据同步给 saas，saas 做数据一致性校验

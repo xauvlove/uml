@@ -2,12 +2,9 @@
 'https://plantuml.com/state-diagram
 !theme toy
 
-hide footbox
-skinparam backgroundColor #EEEBDC
+skinparam backgroundColor #DDDDDD
 
-skinparam sequence {
-    LifeLineBackgroundColor grey
-}
+hide footbox
 
 state "创建中" as creating
 creating : 只能流转到生效中

@@ -167,24 +167,24 @@ return
 MarketingActivityDomainService -> TmallCampusItemRepository : 查询门店品
 return
 
-MarketingActivityDomainService -> MarketingActivityAdapter : 不同活动类型进对应处理器
-
 group 分布式锁
+    MarketingActivityDomainService -> MarketingActivityAdapter : 不同活动类型进对应处理器
     MarketingActivityAdapter -> Umcc : 修改活动
     note right of MarketingActivityAdapter
         圈品和排品的更新，废弃掉使原分组失效重建的方式
         改用数据比对，然后进行增删操作
     end note
     return
+    return
     MarketingActivityDomainService -> MarketingActivityRepository : 设置活动状态为生效中
     return
 end group
-    MarketingActivityDomainService -> MarketingActivityDomainService : 发出一个消息，表示活动已经变更完成
-    note right of MarketingActivityDomainService
-        消息体：ActivitySuccessMessage
-        带活动 id
-    end note
-    return
+
+MarketingActivityDomainService -> MarketingActivityDomainService : 发出一个消息，表示活动已经变更完成
+note right of MarketingActivityDomainService
+    消息体：ActivitySuccessMessage
+    带活动 id
+end note
 return
 return
 
