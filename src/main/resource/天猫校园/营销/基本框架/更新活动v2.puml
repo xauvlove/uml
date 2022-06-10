@@ -74,6 +74,9 @@ end note
 ->o saas : 异步调用
 
 saas -> MarketingActivityWriteService : 传入活动基本信息
+note right of saas
+    需要带本次幂等 id 和 上一次的幂等 id
+end note
 
 MarketingActivityWriteService -> MarketingActivityRepository : 保存
 note right of MarketingActivityWriteService
@@ -87,35 +90,37 @@ MarketingActivityWriteService -> MarketingActivityRepository : 保存
 return
 return
 
-saas -> MarketingActivityWriteService : 传入活动圈品
-
-MarketingActivityWriteService -> MarketingActivityRepository : 查询上一次的数据快照[tp品/品牌/类目]
-return
-
-MarketingActivityWriteService -> MarketingActivityWriteService : 比较差异
-note right of MarketingActivityWriteService
-    比较快照数据和 saas 传过来的全量数据的快照[tp品/品牌/类目]
+saas -> MarketingActivityWriteService : 传入全量活动圈品
+note right of saas
+    圈品包括：
+    类目、品牌、tp品
 end note
+
+
+group Transaction
+    MarketingActivityWriteService -> MarketingActivityRepository : 保存圈品快照
+    note right of MarketingActivityWriteService
+        保存的商品快照，tp、类目、品牌
+    end note
+    return
+end group
 return
 
-MarketingActivityWriteService -> TmallCampusItemRepository : 查询门店品
+saas -> MarketingActivityWriteService : 传入全量活动排品
+note right of saas
+    排品包括：
+    类目、品牌、tp品
+end note
+
+group Transaction
+    MarketingActivityWriteService -> MarketingActivityRepository : 保存排品快照
+    note right of MarketingActivityWriteService
+        保存的 tp 品、类目、品牌快照
+    end note
+    return
+end group
 return
 
-MarketingActivityWriteService -> MarketingActivityRepository : 保存
-return
-return
-
-saas -> MarketingActivityWriteService : 传入活动排品
-
-MarketingActivityWriteService -> MarketingActivityWriteService : 比较差异
-return
-
-MarketingActivityWriteService -> TmallCampusItemRepository : 查询门店品
-return
-
-MarketingActivityWriteService -> MarketingActivityRepository : 保存
-return
-return
 
 rnote across
     saas 保证接口都调通了，并且返回 true，就可以发送 '确认' 请求
@@ -129,6 +134,7 @@ end note
 saas -> MarketingActivityWriteService : 确认
 MarketingActivityWriteService -> MarketingActivityWriteService : 发出一个消息，用于开始往ump写活动
 note right of MarketingActivityWriteService
+    消息体：ActivityReadyMessage
     带幂等 id
 end note
 return
@@ -142,7 +148,23 @@ rnote across
     3.saas 不断轮询活动的生效状态，直到生效成功或者失败。如果失败，重新发起 确认流程
 end note
 ->o MarketingActivityDomainService : 异步消息回调
-MarketingActivityDomainService -> MarketingActivityRepository : 取出活动数据
+MarketingActivityDomainService -> MarketingActivityRepository : 取出本次活动数据
+note right of MarketingActivityDomainService
+    根据幂等 id 取出
+    tp品、品牌、类目、门店等
+end note
+return
+
+MarketingActivityDomainService -> MarketingActivityRepository : 查询上一次的数据快照[tp品/品牌/类目]
+return
+
+MarketingActivityDomainService -> MarketingActivityDomainService : 比较差异
+note right of MarketingActivityDomainService
+    比较快照数据和 saas 传过来的全量数据的快照[tp品/品牌/类目]
+end note
+return
+
+MarketingActivityDomainService -> TmallCampusItemRepository : 查询门店品
 return
 
 MarketingActivityDomainService -> MarketingActivityAdapter : 不同活动类型进对应处理器
@@ -150,12 +172,19 @@ MarketingActivityDomainService -> MarketingActivityAdapter : 不同活动类型�
 group 分布式锁
     MarketingActivityAdapter -> Umcc : 修改活动
     note right of MarketingActivityAdapter
-        圈品和排品的更新，采用使原分组失效重建的方式
+        圈品和排品的更新，废弃掉使原分组失效重建的方式
+        改用数据比对，然后进行增删操作
     end note
     return
     MarketingActivityDomainService -> MarketingActivityRepository : 设置活动状态为生效中
     return
 end group
+    MarketingActivityDomainService -> MarketingActivityDomainService : 发出一个消息，表示活动已经变更完成
+    note right of MarketingActivityDomainService
+        消息体：ActivitySuccessMessage
+        带活动 id
+    end note
+    return
 return
 return
 

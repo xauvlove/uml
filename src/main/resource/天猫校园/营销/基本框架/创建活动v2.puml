@@ -35,6 +35,7 @@ skinparam sequence {
 actor 用户 as user
 participant 创纪云 as saas
 participant MarketingActivityWriteService as MarketingActivityWriteService
+participant MarketingActivityReadService as MarketingActivityReadService
 participant MarketingActivityDomainService as MarketingActivityDomainService
 participant MarketingActivitySyncService as MarketingActivitySyncService
 participant MarketingActivityAdapter as MarketingActivityAdapter
@@ -58,6 +59,14 @@ saas -> saas : 内部逻辑
 note right of saas
     数据检查等等
 end note
+
+saas -> MarketingActivityReadService : 查询是否可以进行创建操作
+note right of saas
+    这里做一个扩展，特殊日期：618 是不可以往 umcc 写数据的
+    仅做扩展用，具体是否往里面加逻辑待调研
+end note
+return
+
 return
 return 返回活动状态：发布中
 
@@ -65,8 +74,6 @@ rnote across
     创建时，异步调用会返回全量信息
     包括：活动信息、详情、圈品、排品
     并且给一个幂等 id
-
-     ** 校园仅做数据暂存，不保证和任何一方的数据一致 **
 end note
 
 ->o saas : 异步调用
@@ -99,24 +106,29 @@ note right of saas
     类目、品牌、tp品
 end note
 
-MarketingActivityWriteService -> TmallCampusItemRepository : 查询门店品
-return
-MarketingActivityWriteService -> MarketingActivityRepository : 保存圈品快照
-note right of MarketingActivityWriteService
-    保存的商品快照，不仅仅是门店品，还有tp品
-end note
-return
+group Transaction
+    MarketingActivityWriteService -> MarketingActivityRepository : 保存圈品快照
+    note right of MarketingActivityWriteService
+        保存的商品快照，tp、类目、品牌
+    end note
+    return
+end group
+
 return
 
 saas -> MarketingActivityWriteService : 传入活动排品、门店信息等
 note right of saas
     需要明确的是，排品包括：
-    类目、品牌、商品
+    类目、品牌、tp品
 end note
-MarketingActivityWriteService -> TmallCampusItemRepository : 查询门店品
-return
-MarketingActivityWriteService -> MarketingActivityRepository : 保存排品快照
-return
+
+group Transaction
+    MarketingActivityWriteService -> MarketingActivityRepository : 保存排品快照
+    note right of MarketingActivityWriteService
+        保存的 tp 品、类目、品牌快照
+    end note
+    return
+end group
 return
 
 rnote across
@@ -146,7 +158,21 @@ group 往 ump 写数据
     end note
     ->o MarketingActivityDomainService : 异步消息回调
     MarketingActivityDomainService -> MarketingActivityRepository : 取出活动数据
+    note right of MarketingActivityDomainService
+        取出 tp品、品牌、类目、门店等
+    end note
     return
+
+    MarketingActivityDomainService -> TmallCampusItemRepository : 查询门店品
+    return
+
+    group Transaction
+        MarketingActivityDomainService -> MarketingActivityRepository : 保存圈品快照
+        note right of MarketingActivityDomainService
+            保存门店品商品快照
+        end note
+        return
+    end group
 
     MarketingActivityDomainService -> MarketingActivityAdapter : 不同活动类型进对应处理器
 
