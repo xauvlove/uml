@@ -60,11 +60,20 @@ note right of saas
     数据检查等等
 end note
 
-saas -> MarketingActivityReadService : 查询是否可以进行创建操作
+saas -> MarketingActivityWriteService :获取创建活动许可
 note right of saas
     这里做一个扩展，特殊日期：618 是不可以往 umcc 写数据的
     仅做扩展用，具体是否往里面加逻辑待调研
+
+    给出幂等 id
 end note
+MarketingActivityWriteService -> MarketingActivityDomainService : 将活动状态变创建中
+note right of MarketingActivityWriteService
+    并修改校园本地活动状态为：创建中
+end note
+MarketingActivityDomainService -> MarketingActivityRepository : 改变活动状态
+return
+return
 return
 
 return
@@ -73,7 +82,7 @@ return 返回活动状态：发布中
 rnote across
     创建时，异步调用会返回全量信息
     包括：活动信息、详情、圈品、排品
-    并且给一个幂等 id
+    并且给出幂等 id
 end note
 
 ->o saas : 异步调用

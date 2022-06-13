@@ -58,7 +58,14 @@ note right of saas
     数据检查等等
 end note
 
-saas -> MarketingActivityReadService : 查询是否可以进行更新操作
+saas -> MarketingActivityWriteService : 获取变更准入许可
+MarketingActivityWriteService -> MarketingActivityDomainService : 将活动状态变为修改中
+note right of MarketingActivityWriteService
+    并修改校园本地活动状态为：修改中
+end note
+MarketingActivityDomainService -> MarketingActivityRepository : 改变活动状态
+return
+return
 return
 return
 return 返回活动状态：发布中
@@ -79,9 +86,6 @@ note right of saas
 end note
 
 MarketingActivityWriteService -> MarketingActivityRepository : 保存
-note right of MarketingActivityWriteService
-    并修改校园本地活动状态为：修改中
-end note
 return
 return
 
