@@ -7,8 +7,12 @@ skinparam backgroundColor #DDDDDD
 hide footbox
 
 state "创建中" as creating
-creating : 只能流转到生效中
+creating : 只能流转到创建完成
 creating : 可以流转到被删除
+
+state "创建完成" as created
+created : 只能流转到生效中
+created : 可以流转到被删除
 
 state "生效中" as running
 running : 可以流转到修改中
@@ -17,22 +21,34 @@ running : 是修改的准入条件，活动必须生效才可以进行修改
 running : 可以由创建、修改流转到此状态
 
 state "修改中" as updating
-updating : 可以流转到生效中
+updating : 可以流转到修改完成
 updating : 可以流转到被删除
+
+state "修改完成" as updated
+updated : 可以流转到生效中
+updated : 可以流转到被删除
 
 state "被删除" as deleted
 deleted : 被删除是一个单独的字段，不与其他状态共享同一个字段
 
-creating -right-> running
+creating -right-> created
+
+created -right-> running
 
 running -right-> updating
 
-updating -right-> running
+updating -right-> updated
+
+updated -down-> running
 
 creating -----up[dotted]-> deleted
+
+created -----up[dotted]-> deleted
 
 running -----up[dotted]-> deleted
 
 updating -----up[dotted]-> deleted
+
+updated -----up[dotted]-> deleted
 
 @enduml

@@ -32,21 +32,22 @@ skinparam sequence {
     ActorFontColor black
 }
 
-participant ScheduleX2 as ScheduleX2
-participant 天猫校园 as tmxy
 participant 创纪云 as saas
+
+participant 天猫校园 as tmxy
 participant ump as ump
 participant sunfire as sunfire
 participant 钉钉 as dd
 
-ScheduleX2 -> tmxy : 30 分钟触发
+saas -> tmxy : 请求创建活动
 
-tmxy -> saas : 查询 24h 内发生变更的活动，获取 saas 活动数据
-note right of tmxy
-    查出所有的 TP 商
-    根据 tpId 查询 24h 内发生变更的活动
-    拿到 activityId
-end note
+tmxy -> ump : 写入活动数据
+return
+return
+
+-> tmxy : ump 消息回调
+
+tmxy -> saas : 根据 activityId 查询活动，获取 saas 活动数据
 return
 
 tmxy -> ump : 根据 activityId 查询 ump 侧活动数据
