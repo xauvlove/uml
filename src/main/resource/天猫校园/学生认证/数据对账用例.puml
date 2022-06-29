@@ -1,0 +1,17 @@
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+skinparam backgroundColor #EEEBDC
+
+'使用 toy 主题
+!theme toy
+
+* 学生认证对账用例
+
+** 本地库
+** 奥格系统
+** 用户中心
+
+
+
+
+@endmindmap
