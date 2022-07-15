@@ -32,12 +32,15 @@ skinparam sequence {
 
 actor 店员 as shopper
 participant POS机 as pos
-participant BillReadService as BillReadService
-participant BillRepository as BillRepository
+participant new_retail_pos
 
-BillReadService -> BillRepository : 查询总数
-note right of BillReadService
+shopper -> pos : 点击打印日结单
+pos -> campus_retail : 查询日结单
+campus_retail -> campus_retail : 聚合当日收银员订单并计算
+return
+return 返回日结单信息
+return 执行打印
 
-end note
+
 
 @enduml

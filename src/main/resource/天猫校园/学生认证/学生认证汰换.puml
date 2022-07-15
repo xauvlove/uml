@@ -1,0 +1,61 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+autoActivate on
+
+'使用 toy 主题
+!theme toy
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+participant ODPS as odps
+database campus as campus
+participant StudentService as StudentService
+database StudentRepository as StudentRepository
+participant AugeGateway as AugeGateway
+participant UicGateway as UicGateway
+
+odps -> campus : 数据导入
+return
+
+loop
+    StudentService -> StudentRepository : 查询 sync = 0 的记录
+    return
+
+    StudentService -> AugeGateway : 删除奥格标
+    return
+
+    StudentService -> UicGateway : 删除用户标
+    return
+
+    StudentService -> StudentRepository : sync = 1
+    return
+
+    StudentService -> StudentRepository : 学生认证状态 = 5
+    return
+end loop
+
+
+
+@enduml
