@@ -1,0 +1,25 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+
+!theme toy
+
+class 会员
+class 学生
+class 用户
+class 学校
+
+会员 : ec
+学生 : name
+学生 : school
+用户 : userId
+学校 : schoolName
+
+
+学生 *- 学校
+
+
+学生 <|-- 用户
+会员 <|-- 学生
+
+@enduml

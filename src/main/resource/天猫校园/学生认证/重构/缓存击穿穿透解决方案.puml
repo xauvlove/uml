@@ -1,0 +1,18 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+(*) --> "查询用户"
+--> === S1 ===
+
+--> Tair
+--> === S2 ===
+--> DB
+--> (*)
+
+-> Tair
+
+DB --> O
+
+-> Tair
+
+@enduml

@@ -1,0 +1,68 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+autoActivate on
+
+'使用 toy 主题
+!theme toy
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 用户 as user
+participant StudentWriteService as StudentWriteService
+participant StudentReadService as StudentReadService
+database MetaQListener as MetaQListener
+participant StudentAuthenticateDomainService as StudentAuthenticateDomainService
+database StudentRepository as StudentRepository
+database MetaQSender as MetaQSender
+
+user -> StudentReadService : 获取退出链接
+
+StudentReadService -> StudentAuthenticateDomainService : 生成加密链接
+return
+return
+
+user -> StudentWriteService : 用户通过链接进入退出页面
+
+StudentWriteService -> StudentAuthenticateDomainService : 检测是否专属链接
+return
+
+StudentAuthenticateDomainService -> StudentAuthenticateDomainService : 执行退出
+
+StudentAuthenticateDomainService -> StudentRepository : 修改状态
+return
+StudentAuthenticateDomainService -> MetaQSender : 发逆向消息
+return
+
+return
+return
+
+
+-> MetaQListener : 接收逆向消息
+
+MetaQListener -> StudentAuthenticateDomainService : 退出
+return
+return
+
+@enduml
