@@ -1,0 +1,69 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+autoActivate on
+
+'使用 toy 主题
+!theme toy
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+participant StudentAuthExitListener as StudentAuthExitListener
+participant StudentAuthExitProcessor as StudentAuthExitProcessor
+participant UserConvert as UserConvert
+participant StudentAuthenticateDomainService as StudentAuthenticateDomainService
+participant UserAuthenticateValidator as UserAuthenticateValidator
+participant AugeClient as AugeClient
+participant UicTagClient as UicTagClient
+database UserRepository as UserRepository
+
+StudentAuthExitListener -> StudentAuthExitProcessor : 监听认证逆向消息
+note right of StudentAuthExitListener
+    可能与正向存在消息乱序的情况
+end note
+
+StudentAuthExitProcessor -> UserRepository : 查询用户，获取 StudentEntity
+return
+
+StudentAuthExitProcessor -> StudentAuthExitProcessor : 检查是否能够进行退出
+note right of StudentAuthExitProcessor
+    收到消息后，立即查库，查询状态是否已经修改为已退出
+end note
+return
+
+StudentAuthExitProcessor -> StudentAuthenticateDomainService : 取消认证，取消认证权益
+
+StudentAuthenticateDomainService -> AugeClient : 退出奥格人群
+return
+
+StudentAuthenticateDomainService -> UserRepository : 删除奥格人群更新时间
+return
+
+StudentAuthenticateDomainService -> UicTagClient : 删除 Uic 标
+return
+
+return
+
+return
+@enduml

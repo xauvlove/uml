@@ -50,7 +50,7 @@ return
 
 StudentAuthenticateDomainService -> StudentAuthenticateDomainService : 执行退出
 
-StudentAuthenticateDomainService -> StudentRepository : 修改状态
+StudentAuthenticateDomainService -> StudentRepository : 修改状态，ext 写入退出原因
 return
 StudentAuthenticateDomainService -> MetaQSender : 发逆向消息
 return

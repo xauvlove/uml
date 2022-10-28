@@ -1,0 +1,25 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+
+!theme toy
+
+class 用户
+
+class StudentAlgoAuthAggr
+class 学校
+
+用户 : userId
+学校 : schoolName
+
+StudentAlgoAuthAggr *- 用户
+StudentAlgoAuthAggr *- 学校
+
+
+StudentAlgoAuthAggr : userEntity
+StudentAlgoAuthAggr : materialVO
+
+
+
+
+@enduml

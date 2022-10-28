@@ -1,0 +1,68 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+autoActivate on
+
+'使用 toy 主题
+!theme toy
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+participant StudentAuthSuccessListener as StudentAuthSuccessListener
+participant StudentAuthSuccessProcessor as StudentAuthSuccessProcessor
+participant UserConvert as UserConvert
+participant StudentAuthenticateDomainService as StudentAuthenticateDomainService
+participant UserAuthenticateValidator as UserAuthenticateValidator
+participant AugeClient as AugeClient
+participant UicTagClient as UicTagClient
+database UserRepository as UserRepository
+
+StudentAuthSuccessListener -> StudentAuthSuccessProcessor : 监听认证成功消息
+note right of StudentAuthSuccessListener
+    可能与逆向存在消息乱序的情况
+end note
+
+StudentAuthSuccessProcessor -> UserRepository : 查询用户，获取 StudentEntity
+return
+
+StudentAuthSuccessProcessor -> StudentAuthSuccessProcessor : 检查是否能够进行正向操作
+note right of StudentAuthSuccessProcessor
+    判断状态
+end note
+return
+StudentAuthSuccessProcessor -> StudentAuthenticateDomainService : 发认证权益等
+
+StudentAuthenticateDomainService -> AugeClient : 加入奥格人群
+return
+
+StudentAuthenticateDomainService -> UserRepository : 刷新奥格人群更新时间
+return
+
+StudentAuthenticateDomainService -> UicTagClient : 打 Uic 标
+return
+
+return
+
+return
+@enduml
