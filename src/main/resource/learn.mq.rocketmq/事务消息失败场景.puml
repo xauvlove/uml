@@ -81,11 +81,4 @@ activate tc
 return
 return 分布式事务结束
 
-
-
-
-
-
-
-
 @enduml
