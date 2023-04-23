@@ -1,11 +1,11 @@
-<mxfile host="Electron" modified="2023-04-23T13:43:27.893Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.1.2 Chrome/106.0.5249.199 Electron/21.4.3 Safari/537.36" etag="91Zvps734r8CfEjEblpp" version="21.1.2" type="device">
+<mxfile host="Electron" modified="2023-04-23T13:56:02.969Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.1.2 Chrome/106.0.5249.199 Electron/21.4.3 Safari/537.36" etag="1ASCAuVBxoWCwqJbaG4i" version="21.1.2" type="device">
   <diagram name="第 1 页" id="9Yr-irU-KVgCtbHujpBM">
     <mxGraphModel dx="2074" dy="1204" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2027" pageHeight="2069" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="BPcnXbv9HBGROFSFqeC2-1" value="分片结构" style="swimlane;strokeWidth=2;swimlaneFillColor=#E6E6E6;fillColor=#1ba1e2;strokeColor=#006EAF;fontColor=#ffffff;" vertex="1" parent="1">
-          <mxGeometry x="500" y="440" width="980" height="900" as="geometry" />
+          <mxGeometry x="500" y="460" width="980" height="900" as="geometry" />
         </mxCell>
         <mxCell id="BPcnXbv9HBGROFSFqeC2-47" value="" style="rounded=1;whiteSpace=wrap;html=1;dashed=1;strokeWidth=2;fillColor=#f5f5f5;gradientColor=#b3b3b3;strokeColor=#666666;" vertex="1" parent="BPcnXbv9HBGROFSFqeC2-1">
           <mxGeometry x="625" y="180" width="210" height="570" as="geometry" />
@@ -25,7 +25,7 @@
         <mxCell id="BPcnXbv9HBGROFSFqeC2-4" value="index3" style="rounded=1;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#ffcd28;gradientColor=#ffa500;strokeColor=#d79b00;" vertex="1" parent="BPcnXbv9HBGROFSFqeC2-1">
           <mxGeometry x="670" y="210" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="BPcnXbv9HBGROFSFqeC2-5" value="node2" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#d5e8d4;gradientColor=#97d077;strokeColor=#82b366;" vertex="1" parent="BPcnXbv9HBGROFSFqeC2-1">
+        <mxCell id="BPcnXbv9HBGROFSFqeC2-5" value="node2" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f8cecc;gradientColor=#ea6b66;strokeColor=#b85450;" vertex="1" parent="BPcnXbv9HBGROFSFqeC2-1">
           <mxGeometry x="30" y="315" width="120" height="80" as="geometry" />
         </mxCell>
         <mxCell id="BPcnXbv9HBGROFSFqeC2-6" value="node1" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#d5e8d4;gradientColor=#97d077;strokeColor=#82b366;" vertex="1" parent="BPcnXbv9HBGROFSFqeC2-1">
@@ -109,8 +109,8 @@
         <mxCell id="BPcnXbv9HBGROFSFqeC2-37" value="分片" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;strokeWidth=2;fillColor=#dae8fc;gradientColor=#7ea6e0;strokeColor=#6c8ebf;" vertex="1" parent="BPcnXbv9HBGROFSFqeC2-1">
           <mxGeometry x="770" y="315" width="40" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="BPcnXbv9HBGROFSFqeC2-38" value="有 3 个索引 {index1, index2, index3}，有 3 个服务器 {node1, node2, node3}&lt;br&gt;其中 index3 的分片有 3 个，主分片分布在每个服务器上，备分片也都分布在各个服务器上" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="BPcnXbv9HBGROFSFqeC2-1">
-          <mxGeometry x="160" y="740" width="590" height="120" as="geometry" />
+        <mxCell id="BPcnXbv9HBGROFSFqeC2-38" value="有 3 个索引 {index1, index2, index3}，有 3 个服务器 {node1, node2, node3}&lt;br&gt;其中 index3 的分片有 3 个，主分片分布在每个服务器上，备分片也都分布在各个服务器上&lt;br&gt;&lt;br&gt;ES服务器节点分为主节点和数据节点，主节点负责索引创建、删除、决定分片分配节点等。&lt;br&gt;数据节点负责数据的 CRUD。" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="BPcnXbv9HBGROFSFqeC2-1">
+          <mxGeometry x="160" y="770" width="590" height="120" as="geometry" />
         </mxCell>
         <mxCell id="BPcnXbv9HBGROFSFqeC2-40" value="主分片" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;strokeWidth=2;fillColor=#f8cecc;gradientColor=#ea6b66;strokeColor=#b85450;" vertex="1" parent="BPcnXbv9HBGROFSFqeC2-1">
           <mxGeometry x="60" y="50" width="40" height="80" as="geometry" />
@@ -129,6 +129,9 @@
         </mxCell>
         <mxCell id="BPcnXbv9HBGROFSFqeC2-11" value="分片" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;strokeWidth=2;fillColor=#f8cecc;gradientColor=#ea6b66;strokeColor=#b85450;" vertex="1" parent="BPcnXbv9HBGROFSFqeC2-1">
           <mxGeometry x="310" y="632" width="40" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="BPcnXbv9HBGROFSFqeC2-48" value="ES服务器主节点" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;strokeWidth=2;fillColor=#f8cecc;gradientColor=#ea6b66;strokeColor=#b85450;" vertex="1" parent="BPcnXbv9HBGROFSFqeC2-1">
+          <mxGeometry x="415" y="50" width="120" height="80" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
