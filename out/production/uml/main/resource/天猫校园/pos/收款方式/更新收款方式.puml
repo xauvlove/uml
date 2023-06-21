@@ -1,0 +1,72 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+actor 用户 as user
+participant 前端 as front
+participant PpInstrumentReadService as PpInstrumentReadService
+participant PpInstrumentWriteService as PpInstrumentWriteService
+participant PpInstrumentRepository as PpInstrumentRepository
+
+
+
+user -> front : 查询门店收款方式列表
+
+front -> PpInstrumentReadService : 根据 tpId/门店 查询收款方式列表
+return
+return
+
+user -> front : 编辑
+
+front -> PpInstrumentWriteService : 更新收款方式
+
+PpInstrumentWriteService -> PpInstrumentRepository : 查询所有收款方式
+return
+
+PpInstrumentWriteService -> PpInstrumentWriteService : 更新记录，增量修改
+return
+
+group 分布式锁 + Transaction
+    PpInstrumentWriteService -> PpInstrumentRepository : 保存 update
+    note right
+        隔离级别：读提交
+        加事务防止部分脏读
+
+        加分布式锁：防止多人同时更改导致得不到任意一方想要的数据
+    end note
+    return
+end group
+
+return
+return
+
+
+
+
+
+
+
+
+
+@enduml

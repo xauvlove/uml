@@ -1,0 +1,47 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+
+Participant Nsq_任务开始消息和任务下发消息 as begin
+Participant GuideTaskAssignedInitVisitTaskEntityAction as guideTaskAssignedInitVisitTaskEntityAction
+Participant TaskEntityCreateQwGroupMissionAction as taskEntityCreateQwGroupMissionAction
+Participant TaskWecomMissionConverts as taskWecomMissionConverts
+Participant 海报系统 as port
+Participant WecomMissionClient as wecomMissionClient
+
+
+
+begin -> guideTaskAssignedInitVisitTaskEntityAction : 任务开始，下发给导购任务
+
+guideTaskAssignedInitVisitTaskEntityAction -> taskEntityCreateQwGroupMissionAction : 创建企微任务
+
+taskEntityCreateQwGroupMissionAction -> taskWecomMissionConverts : 组装回访内容
+
+taskWecomMissionConverts -> port : 给图片打小程序码
+return 返回
+return 返回
+
+taskEntityCreateQwGroupMissionAction -> wecomMissionClient : 创建企微回访任务
+@enduml

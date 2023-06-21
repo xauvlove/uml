@@ -1,0 +1,50 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+actor 用户 as user
+participant 前端 as front
+participant PpInstrumentReadService as PpInstrumentReadService
+participant campus_retail as campus_retail
+participant PpInstrumentRepository as PpInstrumentRepository
+participant PpInstrumentBuilder as PpInstrumentBuilder
+
+
+user -> front : 查询门店收款方式列表
+
+front -> PpInstrumentReadService : 根据 tpId/门店 查询收款方式列表
+
+PpInstrumentReadService -> campus_retail : 查询门店列表
+return
+
+PpInstrumentReadService -> PpInstrumentRepository : 查询门店收款方式列表
+return
+
+PpInstrumentReadService -> PpInstrumentBuilder : 组装门店/收款方式信息
+return
+return
+return
+
+
+@enduml

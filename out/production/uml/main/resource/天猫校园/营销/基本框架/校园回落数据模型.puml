@@ -1,0 +1,27 @@
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+
+skinparam backgroundColor #EEEBDC
+'使用 toy 主题
+!theme toy
+
+* 营销活动回落模型
+
+** marketing_activity
+*** tp_id
+*** store_id
+*** activity_id
+*** status
+*** start_time
+*** end_time
+
+** marketing_activity_item
+*** tp_id
+*** store_id
+*** activity_id
+*** online_item_id
+*** item_id
+*** status
+
+
+@endmindmap

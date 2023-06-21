@@ -1,0 +1,54 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+
+actor "前端" as front
+Participant GuideTaskWReadService as guideTaskReadService
+
+front -> guideTaskReadService :  查看任务
+
+guideTaskReadService -> GuideTaskRepository : 查询
+
+GuideTaskRepository -> TaskDefineDAO : 查询任务主体
+return 返回
+
+GuideTaskRepository -> TaskVisitContentDAO : 查询回访内容
+return 返回
+
+GuideTaskRepository -> TaskDefineAssemblerConverts : 转换 TaskDefine
+return 返回
+
+guideTaskReadService -> GuideTaskInjector : 注入信息
+note left
+    增加素材内容适配
+end note
+
+return 返回
+
+return 返回
+
+return 返回
+
+@enduml

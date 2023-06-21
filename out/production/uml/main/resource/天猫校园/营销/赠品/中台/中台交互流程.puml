@@ -1,0 +1,50 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+actor 用户 as user
+participant POS机 as pos
+participant buy2 as buy2
+participant ump as ump
+participant 支付系统 as pay
+
+group 下单
+    user -> pos : 提交订单
+    pos -> buy2 : 订单创建
+    buy2 -> ump : 查询优惠
+    return 返回优惠
+    return 商品清单及优惠
+    return
+end group
+
+group 支付
+    user -> pos : 支付
+    pos -> buy2 : 订单支付
+    buy2 -> pay : 收单
+    return 支付成功
+    return
+    return
+end group
+
+@enduml

@@ -1,0 +1,38 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+'top to bottom direction替换为left to right direction
+
+skinparam backgroundColor #EEEBDC
+
+skinparam sequence {
+    LifeLineBackgroundColor grey
+}
+
+top to bottom direction
+
+package 店铺立减对账组件 {
+    node 启动组件starter {
+    }
+
+    node 模版引擎 {
+
+    }
+
+    node 核对组件 {
+        [活动]
+        [详情]
+        [圈品]
+        [排品]
+    }
+
+    node 监控组件 {
+
+    }
+
+    node 数据修复组件 {
+
+    }
+}
+
+
+@enduml

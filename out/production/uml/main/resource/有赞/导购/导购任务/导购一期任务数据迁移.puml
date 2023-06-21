@@ -1,0 +1,44 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+Participant shopping_guide_task as shopping_guide_task
+Participant task_define as task_define
+Participant shopping_guide_task_stat as Participant
+Participant task_entity as task_entity
+
+Participant shopping_guide as shopping_guide
+
+shopping_guide_task -> shopping_guide : 根据 department_id 查询店铺 kdtId
+return 返回
+
+shopping_guide_task -> task_define : 刷入 hq_kdt_id 和 department_id
+return 返回
+
+
+
+
+
+
+@enduml

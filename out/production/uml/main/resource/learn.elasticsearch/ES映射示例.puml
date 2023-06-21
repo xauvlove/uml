@@ -1,0 +1,38 @@
+@startjson
+{
+  "mappings": {
+    "properties": {
+      "name": {
+        "type": "text",
+        "fields":{
+            "type": "keyword",
+            "ignore_above": 256
+        }
+      },
+      "price": {
+        "type": "float"
+      },
+      "description": {
+        "type": "text"
+      },
+      "manufacture_date": {
+        "type": "date"
+      },
+      "manufacturer": {
+        "type": "text"
+      },
+      "category": {
+        "type": "keyword"
+      },
+      "image": {
+        "type": "binary"
+      },
+      "location": {
+        "type": "geo_point"
+      }
+    }
+  }
+}
+
+
+@endjson

@@ -1,0 +1,70 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+!theme toy
+
+'自动激活
+autoActivate on
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 用户 as user
+participant POS机 as pos
+participant 校园商品 as item
+participant 校园POS应用 as nrp
+participant 支付中台 as pp
+participant 校园业务包 as app
+participant 支付宝 as alipay
+
+user -> pos : 扫商品码
+
+pos -> item : 查询商品
+
+return 返回
+return 返回商品列表
+
+user -> pos : 扫支付宝付款码，支付
+
+pos -> pp : 请求支付，透传线上主品
+
+pp -> app : 解析校园线上主品模型
+
+app -> app: 遍历子单，匹配线下子品，获取线上主品
+return
+return 返回线上主品信息，并构建商品支付模型
+
+pp -> alipay : 支付宝支付
+
+alipay -> alipay : 遍历用户优惠券，核销优惠券
+
+return 支付结果
+
+return 支付成功
+
+return 支付成功
+
+return 支付成功
+
+@enduml

@@ -1,0 +1,53 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+!theme toy
+
+'自动激活
+autoActivate on
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 用户 as user
+participant 创纪云 as saas
+participant 校园 as tmxy
+participant umcc as umcc
+
+user -> saas : 创建活动
+
+saas -> saas : saas侧内部创建
+
+saas -> tmxy : 发起校园活动创建
+
+tmxy -> tmxy : 参数转换，转换为 umcc 参数
+
+tmxy -> umcc : 写入 umcc
+return 返回
+return 返回
+return 返回
+return 返回
+return 返回
+
+@enduml

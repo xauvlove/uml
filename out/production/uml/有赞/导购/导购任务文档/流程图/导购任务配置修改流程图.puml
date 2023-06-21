@@ -1,0 +1,16 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+
+    : 管理员修改审核方式 -> 自动审核;
+    : auditAllTask();
+    : 找出所有没有被审核的任务;
+    : 审核任务 ->  通过;
+    : 过滤过期任务;
+    : 调用领域服务 -> startTask();
+    : 发任务开始消息;
+
+stop
+
+@enduml

@@ -1,0 +1,62 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+autoActivate on
+
+'使用 toy 主题
+!theme toy
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 用户 as actor
+participant StudentReadService as StudentReadService
+participant StudentWriteService as StudentWriteService
+participant StudentDomainService as StudentDomainService
+participant 外部系统 as OtherSystem
+
+actor -> StudentReadService : 查询认证状态
+return 首次认证
+
+actor -> StudentWriteService : 发起认证/算法认证
+
+StudentWriteService -> StudentDomainService : 调用领域服务，发起算法预判
+
+StudentDomainService -> OtherSystem : 查询算法人群包
+return
+return
+
+StudentWriteService -> StudentDomainService : 预判通过/不通过，调用领域服务，算法预判通过/不通过
+note right of StudentWriteService
+    1.奥格
+    2.uic
+    3.本地库表
+        3.1 状态、入学时间、学校、通过认证时间
+    4.发一个认证通过消息
+end note
+
+return
+return
+
+
+@enduml

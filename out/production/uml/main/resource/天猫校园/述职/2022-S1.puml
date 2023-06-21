@@ -1,0 +1,34 @@
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+skinparam backgroundColor #EEEBDC
+
+'使用 toy 主题
+!theme toy
+
+* 2022年 S1
+
+** 会员 && 认证
+*** 学生认证降本提效 1.0
+
+
+
+
+*** 学生认证降本提效 2.0
+
+*** 学生认证降本提效 3.0
+
+
+** 流量阵地
+*** 小程序认证弹窗
+*** 小程序营销
+
+
+** 补位
+*** POS
+
+
+*** 营销
+
+
+
+@endmindmap

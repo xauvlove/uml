@@ -1,0 +1,29 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+
+
+top to bottom direction
+
+usecase A as a #bd6758;line:black
+usecase B as b #bd6758;line:black
+usecase F as f #bd6758;line:black
+usecase G as g #bd6758;line:black
+
+usecase d5 as d5 #bd6758;line:black
+
+
+a --> b
+
+
+
+
+b --> f
+
+f --> g
+
+
+
+g --> d5 #blue;line.dashed;text:blue
+
+@enduml

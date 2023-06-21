@@ -1,0 +1,68 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+autoActivate on
+
+'使用 toy 主题
+!theme toy
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+participant ODPS as odps
+database campus as campus
+participant StudentMergeService as StudentMergeService
+database StudentRepository as StudentRepository
+participant AugeGateway as AugeGateway
+participant UicGateway as UicGateway
+
+
+odps -> campus : 导入到 campus 库
+note right of odps
+    全量写入
+    select * from tmxy_retail.tmall_campus_old_student where college_tag = 1
+end note
+return
+
+loop
+    StudentMergeService -> StudentRepository : 查询导入数据
+    note right of StudentMergeService
+        select * from campus_student_old where id > ? limit 500
+    end note
+    return
+end loop
+
+loop
+    StudentMergeService -> AugeGateway : 学生身份续期
+    return
+    StudentMergeService -> UicGateway : 打学生标
+    return
+    StudentMergeService -> StudentRepository : 写表
+    note right of StudentMergeService
+        status = 1，算法预判通过
+        label_refresh_time = now()，奥格人群续期时间为：当前
+        source_from = usr-inc，表示来源为老表导入
+    end note
+    return
+end loop
+@enduml

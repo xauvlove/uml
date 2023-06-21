@@ -1,0 +1,17 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+
+    : TSP 或者 管理员点击结束按钮;
+    : endTask();
+    partition Transaction{
+        : 任务状态流转至 结束;
+        : 操作记录;
+        : 发任务结束消息;
+    }
+
+
+stop
+
+@enduml

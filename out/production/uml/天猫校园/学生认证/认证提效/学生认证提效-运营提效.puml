@@ -1,0 +1,55 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+autoActivate on
+
+'使用 toy 主题
+!theme toy
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 用户 as actor
+participant 宜搭 as yida
+participant StudentService as StudentService
+participant ImageRecognitionService as ImageRecognitionService
+participant StudentDomainService as StudentDomainService
+database StudentRepository as StudentRepository
+participant AugeGateway as AugeGateway
+participant UicGateway as UicGateway
+
+actor -> yida : 进入审核页面
+
+yida -> StudentService : 传图片链接，请求识别
+
+StudentService -> ImageRecognitionService : 识别图片
+return
+return
+return 前端 **自动匹配** 并 **高亮** 关键信息
+
+
+
+
+
+
+@enduml

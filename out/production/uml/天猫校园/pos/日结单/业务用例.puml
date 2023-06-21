@@ -1,0 +1,60 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+!theme toy
+
+left to right direction
+
+'-----------------------------------------------------------
+actor 用户 as user
+'-----------------------------------------------------------
+
+usecase 单据
+
+
+usecase 基本信息
+usecase 交易日期
+usecase POS机编号
+usecase 门店编号
+usecase 打印时间
+
+usecase 销售信息
+usecase 销售总额
+usecase 优惠总额
+usecase 销售笔数
+usecase 销售笔单价
+usecase 退款总额
+
+usecase 收银信息
+usecase 支付宝收银总额
+usecase 微信收银总额
+usecase 现金收银总额
+usecase 其他
+
+
+
+
+user --> 单据
+
+
+
+
+单据 --> 基本信息
+单据 --> 销售信息
+单据 --> 收银信息
+
+基本信息 --> 交易日期
+基本信息 --> POS机编号
+基本信息 --> 门店编号
+基本信息 --> 打印时间
+
+销售信息 --> 销售总额
+销售信息 --> 优惠总额
+销售信息 --> 销售笔数
+销售信息 --> 销售笔单价
+销售信息 --> 退款总额
+
+收银信息 --> 支付宝收银总额
+收银信息 --> 微信收银总额
+收银信息 --> 现金收银总额
+收银信息 --> 其他
+@enduml

@@ -1,0 +1,46 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+!theme toy
+
+'自动激活
+autoActivate on
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 店员 as shopper
+participant POS机 as pos
+participant new_retail_pos
+
+shopper -> pos : 点击打印日结单
+pos -> campus_retail : 查询日结单
+campus_retail -> campus_retail : 聚合当日收银员订单并计算
+return
+return 返回日结单信息
+return 执行打印
+
+
+
+@enduml

@@ -1,0 +1,47 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+!theme toy
+title fig.all
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+actor 用户 as user
+participant 创纪云 as saas
+participant 校园 as tmxy
+participant umcc as umcc
+
+user -> saas : 发起活动变更
+
+saas -> saas : 内部变更
+
+saas -> tmxy : 发起校园活动变更
+
+tmxy -> tmxy : 参数转换，转换为 umcc 参数
+
+tmxy -> umcc : 写入 umcc
+return 返回
+return 返回
+return 返回
+return 返回
+return 返回
+
+@enduml

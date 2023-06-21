@@ -1,0 +1,63 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+!theme toy
+
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 用户 as user
+participant 云小派 as yxp
+participant 孕校云 as yxy
+participant 淘宝 as tb
+
+user -> yxp : 填写信息提交
+activate yxp
+return
+
+yxp -> yxy : 提交审核
+activate yxy
+return
+
+yxy -> yxy : 审核成功
+activate yxy
+
+yxy -> tb : 用户打标
+activate tb
+return
+return
+
+yxy -> user : 发送短信
+user -> tb : 跳转承接页
+activate tb
+return 下单成功
+
+
+
+
+
+
+@enduml

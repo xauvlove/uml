@@ -1,0 +1,14 @@
+@startjson
+{
+  "itemPromotion": {},
+  "shopPromotion": [
+    {
+      "activityName": "fake_data",
+      "displayText": "fake_data",
+      "promotionType": 30,
+      "discountFee": 31,
+      "sharedItems": {}
+    }
+  ]
+}
+@endjson

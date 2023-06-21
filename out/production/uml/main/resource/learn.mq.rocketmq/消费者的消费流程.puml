@@ -1,0 +1,124 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+!theme toy
+
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2
+
+'响应信息文字显示在箭头下面
+'skinparam responseMessageBelowArrow true
+
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #6FC8F2
+
+'参与者边框颜色
+ParticipantBorderColor black
+
+'参与者背景颜色
+ParticipantBackgroundColor #6FC8F2
+
+'数据库背景颜色
+DatabaseBackgroundColor black
+
+'文字压缩格式，impact 代表文字是压缩显示的
+'ParticipantFontName Impact
+
+'参与者名称字体大小
+ParticipantFontSize 15
+
+'参与者名称字体颜色
+ParticipantFontColor black
+
+'actor 的背景颜色
+ActorBackgroundColor #6FC8F2
+
+'actor 的字体颜色
+ActorFontColor black
+
+'actor 的字体大小
+ActorFontSize 15
+
+'actor 的字体
+ActorFontName Aapex
+}
+
+participant 消费者 as consumer
+participant Broker as broker
+
+consumer -> broker : 获取第一批消息
+note right of consumer
+    指定第一次从哪里开始消费，因为 broker 会把所有的消息全部存储到 commitlog 文件
+    比如 broker 已经存储了两年的消息，consumer 是今天刚刚新建的，那么从哪里消费呢？
+    因此需要消费者指定消息的消费位置，
+    1.从queue的第一条开始消费
+    2.从queue的最后一条开始消费
+    3.从某个时间戳开始消费，比如：2023041421342
+end note
+
+return 返回第一批消息
+
+consumer -> consumer : 开始消息消费
+consumer -> broker : 提交消费进度 offset
+
+broker -> broker : 保存消费进度
+note right of broker
+    消费进度保存到 broker 内存
+    消费进度持久化本地文件中，保存格式为：“topic1 ”中的 ”queue1“ 消费到了第 8 条
+end note
+return
+return ACK
+note right of broker
+    ACK 包括三部分数据
+    1.当前消费队列最小 offset
+    2.当前消费队列最大 offset
+    3.下次消费队列起始 offset（下次拉取消息从哪开始拉取），因此下次从哪消费是由 broker 决定的
+end note
+return 消费完成
+
+newpage
+
+group 消费完成后同步提交 offset
+    loop
+        consumer -> broker : 传入 ACK 中的起始 offset，获取下一批次消息
+        return
+
+        consumer -> consumer : 开始消费
+        consumer -> broker : 提交消费进度
+        return 返回 ACK 信息
+        return 消费完成
+    end loop
+end
+
+group 消费完成后异步提交 offset
+    consumer -> broker : 查询下一批次消费的起始 offset
+    return
+
+    consumer -> broker : 根据起始 offset 获取下一批次的消息
+    return
+
+    consumer -> consumer : 执行消费
+    consumer --> broker : 提交消费进度（异步，不等待 broker 响应）
+    consumer --> consumer : 消费完成
+
+    broker --> consumer : 异步返回给消费者 ACK 信息
+
+end
+
+@enduml

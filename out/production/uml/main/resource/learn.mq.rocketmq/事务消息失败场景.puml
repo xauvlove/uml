@@ -1,0 +1,84 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+
+'使用 toy 主题
+!theme toy
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+participant TM as tm
+participant 工行系统 as app
+participant Mysql as mysql
+participant TC as tc
+participant broker as broker
+
+tm -> tc : 开启全局/分支事务
+activate tc
+
+app -> tc : 发送半消息
+activate tc
+
+tc -> broker : 发送一个不可消费的消息
+activate broker
+return
+
+return 返回半消息发送结果
+
+app -> mysql : 执行扣款流程，提交本地事务，持久化到 mysql
+activate mysql
+return
+
+app -> tc : 提交 commit/rollback，表示本地事务执行完成
+note right of app
+    如果提交 commit 表示本地事务执行成功，已经在工行系统中完成扣款，并持久化
+    如果提交 rollback 表示本地事务执行失败，那么接下来的流程也不用走了
+end note
+
+tc -> app : 回查事务状态，也即回查扣款状态
+activate app
+note right of app
+    此时假设 tc 没有收到工行系统的扣款状态，则 tc 需要回查工行系统
+    查询到的结果只有两个：1.扣款成功 2.扣款未成功
+end note
+app -> mysql : 查询数据
+activate mysql
+return
+return 返回事务（扣款）结果
+
+tc -> tm : 上报扣款结果
+activate tm
+return
+
+tc -> broker : 发送完整消息（这次不是半消息了）
+activate broker
+return
+
+tm -> tc : 最终全局/分支事务确认完毕
+activate tc
+return
+return 分布式事务结束
+
+@enduml

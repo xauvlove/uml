@@ -1,0 +1,56 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+skinparam backgroundColor #EEEBDC
+hide footbox
+
+skinparam sequence {
+    LifeLineBackgroundColor grey
+}
+!theme toy
+autonumber
+
+participant "retail-sales" as sales
+participant "DP" as dp
+participant "DB" as db
+participant "ES" as es
+participant "DB-mi" as db_mi
+
+group <font size = 16 color = blue> DP-第一阶段(全量)
+    dp -> db : 全量拉数据
+    note left
+        开始时间设为 t
+    end note
+    activate db
+    return 返回
+    dp -> es : 写入 es
+    activate es
+    return 返回
+end
+
+group <font size = 16 color = blue> DP-第二阶段准备(增量）
+    dp -> db : 拉取增量数据
+    note left
+        updated_at >= t
+    end note
+    activate db
+    return 返回
+    dp -> db_mi : 导出
+    activate db_mi
+     return 返回
+end
+
+group <font size = 16 color = blue>接口-第二阶段(增量)
+    sales -> db_mi : 查询导出的增量数据
+    note left
+        DP 开始时间以后的数据
+    end note
+    activate db_mi
+    return 返回
+
+    sales -> es : 复用 ES创建逻辑写入或更新 ES
+    activate es
+    return 返回
+end
+
+@enduml

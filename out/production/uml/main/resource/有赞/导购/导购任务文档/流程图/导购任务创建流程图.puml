@@ -1,0 +1,21 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+
+    : 前端数据传入;
+    : 数据转换为适配后端格式;
+    partition 进入策略+模版方法模式{
+        : 组装任务通用信息 TaskDefineBase;
+        : 组装任务特征信息 TaskFeature;
+        : 组装任务参与者信息 TaskSubject;
+        : 组装任务子信息 TaskDefineChild;
+    }
+    : 组装整个 TaskDefineEntity;
+    : 保存数据;
+    : 发送任务创建完成消息;
+    : 发送一个任务结束延时任务 TSP;
+
+stop
+
+@enduml

@@ -1,0 +1,46 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+
+actor "admin" as admin
+'Participant NsqClient as nsqClient
+Participant task_new_customer_stat as tncs
+
+Participant shopping_guide_friend_date_stat as sgfds
+Participant department as d
+
+'wecomNewFriendAddTask
+
+tncs -> sgfds : 分页拉取基本数据
+note left
+    根据departmentId查询
+end note
+
+tncs -> d : 根据departmentId查询商城RootKdtId 并获取 taskDefine
+
+tncs -> tncs : 写数据
+
+
+@enduml

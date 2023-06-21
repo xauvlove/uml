@@ -1,0 +1,94 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+autoActivate on
+
+'使用 toy 主题
+!theme toy
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 用户 as actor
+actor 机审 as sa
+participant StudentStockAuthProcService as StudentStockAuthProcService
+participant StudentIdentificationService as StudentIdentificationService
+participant StudentWriteService as StudentWriteService
+participant StudentService as StudentService
+participant StudentAuthenticateDomainService as StudentAuthenticateDomainService
+database StudentRepository as StudentRepository
+participant StudentIdCardOcrManager as StudentIdCardOcrManager
+participant ImageRecognitionService as ImageRecognitionService
+participant 宜搭 as yida
+participant AugeGateway as AugeGateway
+participant UicGateway as UicGateway
+
+actor -> StudentIdentificationService : 上传学生证
+
+StudentIdentificationService -> StudentIdCardOcrManager : 查询图片识别缓存
+return
+
+group 缓存不存在
+    StudentIdentificationService -> ImageRecognitionService : 图片识别
+    return
+    StudentIdentificationService -> StudentIdCardOcrManager : 保存缓存
+    return
+end group
+
+StudentIdentificationService -> StudentIdentificationService : 证件关键字识别
+return
+return
+
+actor -> StudentService : 提交人工审核
+StudentService -> StudentAuthenticateDomainService : 识别三要素
+StudentAuthenticateDomainService -> StudentIdCardOcrManager : 查询图片识别缓存
+return
+
+group 缓存不存在
+    StudentAuthenticateDomainService -> ImageRecognitionService : 图片识别
+    return
+    StudentAuthenticateDomainService -> StudentIdCardOcrManager : 保存缓存
+    return
+end group
+return
+StudentService -> StudentService : 三要素匹配
+return
+return
+
+sa -> StudentStockAuthProcService : 进行机审
+StudentStockAuthProcService -> StudentAuthenticateDomainService : 要素匹配【姓名、日期】
+StudentAuthenticateDomainService -> StudentIdCardOcrManager : 查询图片识别缓存
+return
+
+group 缓存不存在
+    StudentAuthenticateDomainService -> ImageRecognitionService : 图片识别
+    return
+    StudentAuthenticateDomainService -> StudentIdCardOcrManager : 保存缓存
+    return
+end group
+return
+StudentStockAuthProcService -> StudentStockAuthProcService : 机审操作
+return
+return
+
+@enduml

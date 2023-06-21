@@ -1,0 +1,75 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+Participant "nsq.shopping.guide.task.data.change.channel \n 导购任务分配给部门和导购监听器" as nsq
+Participant TaskDataChangeProcessor as taskDataChangeProcessor
+Participant ShoppingGuideTaskRepository as shoppingGuideTaskRepository
+Participant DepartmentReadClient as departmentReadClient
+Participant ShoppingGuideTaskAssignIdemRepository as shoppingGuideTaskAssignIdemRepository
+Participant TaskAssignN2AllDStrategy as taskAssignN2AllDStrategy
+Participant DepartmentReadClient as departmentReadClient
+Participant TaskTargetComponent as taskTargetComponent
+Participant ShoppingGuideTaskAssignBuilder as shoppingGuideTaskAssignBuilder
+Participant ShoppingGuideTaskRepository as shoppingGuideTaskRepository
+
+nsq -> taskDataChangeProcessor : 进入处理流程
+
+taskDataChangeProcessor -> shoppingGuideTaskRepository : 查询任务
+return 返回
+
+taskDataChangeProcessor -> departmentReadClient : 查询部门 创建任务的部门
+return 返回
+
+group lock
+    taskDataChangeProcessor -> shoppingGuideTaskAssignIdemRepository : 幂等校验
+    note left
+        每个任务一个幂等记录
+        使用 version 进行幂等，
+        如果本次接收到的消息题中的 version < 表里的 version
+        表示该任务已经下发过了，忽略此次消息
+    end note
+    return 返回
+    taskDataChangeProcessor -> taskDataChangeProcessor : 使用 version 做乱序处理
+    return 返回
+
+    taskDataChangeProcessor -> taskAssignN2AllDStrategy : 任务分配
+
+    taskAssignN2AllDStrategy -> departmentReadClient : 查询下一层级所有子部门
+    return 返回
+
+    taskAssignN2AllDStrategy -> taskTargetComponent : 平均分配给下层级的所有子部门
+    return 返回 分配结果
+
+    taskAssignN2AllDStrategy -> shoppingGuideTaskAssignBuilder : 对所有子部门进行任务实体组装
+    return 返回 任务列表 task_list
+
+    taskAssignN2AllDStrategy -> shoppingGuideTaskRepository : 更新或插入 task_list
+    return 返回
+
+end group
+
+return 返回
+return 返回
+@enduml

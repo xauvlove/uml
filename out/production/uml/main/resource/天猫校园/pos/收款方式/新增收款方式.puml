@@ -1,0 +1,66 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+actor 用户 as user
+participant 前端 as front
+participant PpInstrumentWriteService as PpInstrumentWriteService
+participant PpInstrumentRepository as PpInstrumentRepository
+participant PpInstrumentBuilder as PpInstrumentBuilder
+
+
+user -> front : 新增一条记录
+
+
+group 查询结果不为空
+    front -> PpInstrumentWriteService : 新增
+    PpInstrumentWriteService -> PpInstrumentRepository : 查询
+    return
+    return 新增失败
+end group
+
+group 查询结果为空
+    front -> PpInstrumentWriteService : 新增
+    PpInstrumentWriteService -> PpInstrumentRepository : 查询
+    return
+    PpInstrumentWriteService -> PpInstrumentBuilder : 构建
+    return
+    group Transaction
+        PpInstrumentWriteService -> PpInstrumentRepository : 插入
+        note right
+            事务防止部分成功部分失败
+            事务防止多人同时新增
+        end note
+        return
+    end group
+    return
+end group
+
+return
+
+
+
+
+
+@enduml

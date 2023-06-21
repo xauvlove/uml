@@ -1,0 +1,66 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+autoActivate on
+
+'使用 toy 主题
+!theme toy
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 用户 as actor
+participant StudentService as StudentService
+participant StudentDomainService as StudentDomainService
+participant 外部系统 as OtherSystem
+
+actor -> StudentService : 发起人工审核
+
+StudentService -> StudentDomainService : 调用领域服务，发起自动审核
+
+StudentDomainService -> StudentDomainService : 自动审核流程
+return
+return
+
+StudentService -> StudentDomainService : 自动审核通过流程
+return
+
+StudentService -> StudentDomainService : 自动审核未通过，发起人工审核 [宜搭]
+
+StudentDomainService -> OtherSystem : 提交宜搭
+return
+return
+
+return
+
+-> StudentService : 宜搭回调
+
+StudentService -> StudentDomainService : 人工审核通过流程
+return
+
+StudentService -> StudentDomainService : 人工审核未通过流程
+return
+
+return
+
+@enduml

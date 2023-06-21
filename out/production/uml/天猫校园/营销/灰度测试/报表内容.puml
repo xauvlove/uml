@@ -1,0 +1,72 @@
+@startuml
+
+'!theme materia-outline
+'!theme superhero-outline
+
+skinparam backgroundColor #EEEBDC
+
+skinparam usecase {
+
+    BackgroundColor #6FC8F2
+    BorderColor DarkSlateGray
+    ActorBackgroundColor #6FC8F2
+    'ArrowColor Olive
+    ActorBorderColor black
+    ActorFontName Courier
+}
+
+
+hide unlinked
+
+
+left to right direction
+
+usecase 活动报表 as fbi
+usecase 总指标 as total
+fbi --> total
+
+usecase 活动类型 as ActivityType
+total --> ActivityType
+usecase tp商个数 as tp
+total --> tp
+
+usecase 活动总数 as count
+total --> count
+
+usecase 单品立减活动总数 as itemActivityCount
+usecase 店铺立减活总数 as shopActivityCount
+count --> itemActivityCount
+count --> shopActivityCount
+
+usecase 生效的活动总数 as runningCount
+count --> runningCount
+usecase 单品立减生效活动总数 as itemActivityRunningCount
+usecase 店铺立减生效活总数 as shopActivityRunningCount
+runningCount --> itemActivityRunningCount
+runningCount --> shopActivityRunningCount
+
+usecase 当日核心指标 as today
+fbi --> today
+today --> ActivityType
+today --> tp
+today --> count
+
+usecase 指定时间范围核心指标 as timeRange
+fbi --> timeRange
+timeRange --> ActivityType
+timeRange --> tp
+timeRange --> count
+
+
+
+'================================================================'
+newpage
+!theme materia
+
+skinparam backgroundColor #EEEBDC
+hide unlinked
+
+
+
+
+@enduml

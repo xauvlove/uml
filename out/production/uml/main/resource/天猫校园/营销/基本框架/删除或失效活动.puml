@@ -1,0 +1,88 @@
+@startuml
+
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+!theme toy
+
+'自动激活
+autoActivate on
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 用户 as user
+participant 创纪云 as saas
+participant MarketingActivityWriteService as MarketingActivityWriteService
+participant MarketingActivityReadService as MarketingActivityReadService
+participant MarketingActivityDomainService as MarketingActivityDomainService
+participant MarketingActivityAdapter as MarketingActivityAdapter
+participant MarketingActivityRepository as MarketingActivityRepository
+participant Umcc as Umcc
+
+rnote across
+    目标：
+    1.saas 逻辑简单，流程编排简单
+    2.校园接口幂等
+    3.数据一致：由接口幂等和流程编排保证
+end note
+
+user -> saas : 删除/失效活动
+
+saas -> saas : 内部逻辑
+note right of saas
+    数据检查等等
+    校园不关心 saas 这里的逻辑实现和编排方式，只是做一个说明
+    saas 仍然可以将内部逻辑移动到下面：也就是等待校园侧删除完成之后，再删除自己的活动
+end note
+return
+
+saas -> MarketingActivityWriteService : 删除/失效活动
+
+MarketingActivityWriteService -> MarketingActivityDomainService : 删除活动
+
+MarketingActivityDomainService -> Umcc : 删除活动
+return
+
+MarketingActivityDomainService -> Umcc : 查询活动状态
+return 返回活动状态?删除:未删除
+
+MarketingActivityDomainService -> MarketingActivityRepository : 修改本地活动状态
+note right of MarketingActivityDomainService
+    保证 umcc 被删除，校园侧也被删除
+end note
+return
+return
+return 删除成功
+
+saas -> MarketingActivityReadService : 查询活动状态
+MarketingActivityReadService -> Umcc : 查询 umcc 活动状态
+return 返回 umcc 活动状态
+return 返回活动状态
+saas -> saas : 发现活动被删除
+return 删除成功
+return
+
+
+@enduml

@@ -1,0 +1,87 @@
+@startuml
+
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+title fig.create
+
+'使用 toy 主题
+!theme toy
+
+'自动激活
+autoActivate on
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 用户 as user
+participant 创纪云 as saas
+participant ShopPromotionService as ShopPromotionService
+participant MarketingActivityWriteService as MarketingActivityWriteService
+participant MarketingRangeWriteService as MarketingRangeWriteService
+participant MarketingDetailWriteService as MarketingDetailWriteService
+participant MarketingDetailReadService as MarketingDetailReadService
+
+
+participant Umcc as Umcc
+
+user -> saas : 创建活动
+return 返回状态：未生效
+
+saas -> ShopPromotionService : 创建活动
+
+ShopPromotionService -> MarketingActivityWriteService : 写入 ump 活动，并获取 activityId
+return
+return
+
+saas -> ShopPromotionService : 创建活动详情
+ShopPromotionService -> MarketingRangeWriteService : 获取分组 id
+return
+
+loop
+    ShopPromotionService -> MarketingDetailWriteService : 写入 ump 活动详情
+    return
+end loop
+
+return 返回
+
+
+loop
+    saas -> ShopPromotionService : 增加圈品
+    ShopPromotionService -> MarketingDetailReadService : 查询活动详情，并获取分组 id
+    return 返回分组 id
+    ShopPromotionService -> MarketingRangeWriteService : 写入 ump 分组元素数据
+    return
+    return
+end loop
+
+loop
+    saas -> ShopPromotionService : 增加排品
+    ShopPromotionService -> MarketingDetailReadService : 查询活动详情，并获取分组 id
+    return 返回分组 id
+    ShopPromotionService -> MarketingRangeWriteService : 写入 ump 分组元素数据
+    return
+    return
+end loop
+
+@enduml

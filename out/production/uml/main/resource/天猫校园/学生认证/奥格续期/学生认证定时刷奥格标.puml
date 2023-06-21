@@ -1,0 +1,59 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+!theme toy
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+participant scheduleX2 as scheduleX
+participant AugeStudentLabelRefreshProcessor as AugeStudentLabelRefreshProcessor
+participant StudentRepository as StudentRepository
+participant AugeCrowdGateway as AugeCrowdGateway
+participant UicGateway as UicGateway
+
+
+scheduleX -> AugeStudentLabelRefreshProcessor: 刷新学生认证标签
+activate AugeStudentLabelRefreshProcessor
+
+loop
+    AugeStudentLabelRefreshProcessor -> StudentRepository : 查询 100 - 7 = 93 天前，将要过期的学生群体
+    activate StudentRepository
+    return
+end loop
+
+loop
+    AugeStudentLabelRefreshProcessor -> AugeCrowdGateway : 刷新学生在人群包的过期时间
+    activate AugeCrowdGateway
+    return
+    AugeStudentLabelRefreshProcessor -> StudentRepository : 更新学生刷新时间
+    activate StudentRepository
+    return
+end loop
+
+return
+
+
+@enduml

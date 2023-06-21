@@ -1,0 +1,39 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+
+Participant Nsq_Guide订单消息 as nsq
+Participant 大数据 as dataCenter
+Participant Guide as guide
+
+
+
+nsq -> dataCenter : 发送订单消息
+
+dataCenter -> guide : 解析消息，反查 task_short_code
+
+dataCenter -> dataCenter : 统计部门、导购订单数据
+
+@enduml

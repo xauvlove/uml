@@ -1,0 +1,56 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+
+actor "前端" as front
+'Participant NsqClient as nsqClient
+Participant GuideTaskWriteService as guideTaskWriteService
+Participant TaskRequestConverts as taskRequestConverts
+Participant GuideTaskDomainService as guideTaskDomainService
+Participant GuideTaskFactory as guideTaskFactory
+Participant GuideTaskRepository as guideTaskRepository
+
+front -> guideTaskWriteService : 创建回访任务
+
+guideTaskWriteService -> taskRequestConverts : 参数转换
+return 返回
+
+guideTaskWriteService -> guideTaskDomainService : 创建任务
+
+guideTaskDomainService -> guideTaskFactory : 组装回访任务对象
+
+note left
+    TaskDefine
+    * TaskVisitContent
+        content_detail : {图片链接，关联商品id}
+    TaskDefineDepartment
+    TaskDefineDepartmentRelation
+end note
+
+return 返回
+
+guideTaskDomainService -> guideTaskRepository : 保存
+
+@enduml

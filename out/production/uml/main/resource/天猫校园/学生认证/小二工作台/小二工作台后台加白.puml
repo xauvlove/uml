@@ -1,0 +1,80 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+autoActivate on
+
+'使用 toy 主题
+!theme toy
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 小二 as user
+participant 零售工作台 as console
+participant StudentWriteService as StudentWriteService
+participant StudentReadService as StudentReadService
+participant UicClient as UicClient
+participant StudentRepository as StudentRepository
+participant AugeClient as AugeClient
+
+user -> console : 输入用户昵称/id，进行加白
+
+console -> StudentWriteService : 请求加白
+
+StudentWriteService -> StudentRepository : 查询用户是否通过认证
+return
+
+StudentWriteService -> UicClient : 查询用户信息
+note right of StudentWriteService
+    根据用户昵称查询
+    主要是拿到用户 id
+end note
+return
+
+StudentWriteService -> AugeClient : 学生身份延长
+return
+
+StudentWriteService -> StudentRepository : 修改学生为：人工审核通过
+return
+
+StudentWriteService -> StudentRepository : 增加操作记录
+note right of StudentWriteService
+    1.增加操作记录：奥格人群包身份延长
+    2.修改学生认证状态
+end note
+
+return
+return
+return
+
+user -> console : 查询操作列表
+
+console -> StudentReadService : 根据 operator_id 查询操作列表
+
+StudentReadService -> StudentRepository : 分页查询
+return
+return
+return
+
+
+@enduml

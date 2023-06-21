@@ -1,0 +1,91 @@
+@startuml
+
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+title fig.update
+
+'使用 toy 主题
+!theme toy
+
+'自动激活
+autoActivate on
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 用户 as user
+participant 创纪云 as saas
+participant ShopPromotionService as ShopPromotionService
+participant MarketingActivityWriteService as MarketingActivityWriteService
+participant MarketingRangeWriteService as MarketingRangeWriteService
+participant MarketingDetailWriteService as MarketingDetailWriteService
+participant MarketingDetailReadService as MarketingDetailReadService
+
+
+participant Umcc as Umcc
+
+user -> saas : 更新活动
+return 返回状态：修改中
+
+saas -> ShopPromotionService : 更新活动
+
+ShopPromotionService -> MarketingActivityWriteService : 通过 activityId 修改活动信息
+return
+return
+
+saas -> ShopPromotionService : 更新活动详情
+ShopPromotionService -> MarketingRangeWriteService : 获取新分组 id
+return
+
+loop
+    ShopPromotionService -> MarketingDetailWriteService : 更新 ump 活动详情
+    return
+end loop
+
+
+return 返回
+
+
+loop
+    saas -> ShopPromotionService : 修改圈品
+    ShopPromotionService -> MarketingDetailReadService : 查询活动详情，并获取分组 id
+    return 返回分组 id
+    ShopPromotionService -> ShopPromotionService : 匹配修改类型，并进行相应操作
+    note right of ShopPromotionService
+        修改类型包括：
+        增加、删除、
+        修改元素包括：
+        门店子品、门店、类目
+
+        需要注意的是：
+        如果活动本身包含 10w 商品，后续商家将活动变为：类目营销
+        那么需要 saas 首先将分组删除，然后再传一个类目 id 即可
+    end note
+    return
+    ShopPromotionService -> MarketingRangeWriteService : 写入 ump 分组元素数据
+    return
+    return
+end loop
+
+@enduml

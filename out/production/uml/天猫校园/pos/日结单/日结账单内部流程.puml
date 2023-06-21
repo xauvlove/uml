@@ -1,0 +1,61 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+!theme toy
+
+'自动激活
+autoActivate on
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 店员 as shopper
+participant POS机 as pos
+participant StoreOrderDailySettlementReadService as StoreOrderDailySettlementReadService
+participant StoreOrderRepository as StoreOrderRepository
+
+shopper -> pos : 请求打印
+
+pos -> StoreOrderDailySettlementReadService : 查询日结单数据
+
+group Distribute Lock
+    StoreOrderDailySettlementReadService -> StoreOrderRepository : 查询订单
+    note right of StoreOrderDailySettlementReadService
+        查询出该门店在该段时间收银员所有订单
+        包含不同设备订单
+    end note
+    return
+    StoreOrderDailySettlementReadService -> StoreOrderDailySettlementReadService : 数据过滤
+    note right of StoreOrderDailySettlementReadService
+        过滤非本设备的
+        过滤非完结单
+    end note
+    return
+    StoreOrderDailySettlementReadService -> StoreOrderDailySettlementReadService : 数据计算
+    return
+end group
+
+return 返回聚合数据
+return 打印日结单
+@enduml

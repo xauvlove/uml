@@ -1,0 +1,142 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+
+skinparam sequence {
+    LifeLineBackgroundColor grey
+}
+
+autonumber
+autoActivate on
+
+'不同的系统应使用不同的合并策略
+participant "ebiz-salesman" as ebiz
+participant "retail-sales" as sales
+participant "salesman-center" as salesman
+participant "retail-finance-performance" as performance
+participant "ES" as es
+participant "tsp" as tsp
+participant "DB-mi" as mi
+
+ebiz -> ebiz : 监听账号合并消息，执行合并
+return 返回
+
+ebiz -> ebiz : 1.TSP 回调, processor 执行 \n 2.在每个 processor 执行完成后检查其他 processor 是否执行完成
+
+alt <font size = 16 color = blue> 未完成 <b>
+    loop <font size = 16 color = blue> tsp 回调执行 <b>
+        ebiz -> ebiz : 返回，等待其他 processor TSP 任务回调
+        return
+    end
+else <font size = 16 color = blue> 完成 <b>
+    ebiz ->o sales : 发送账号合并完成消息
+    sales -> sales : 判断当前时间是否不在当月 16号 - 19号
+    sales -> sales : 判断这个人是否存在正在执行/待执行的账号合并任务
+    note left
+        两条消息到达情况 (消息乱序)
+        |= |= A -> B |= B -> C |
+        | A -> B | 幂等 | 无乱序 |
+        | B -> C | B -> C 等待 A -> B 唤醒 | 幂等 |
+
+        多条消息到达情况 (消息乱序)
+        |= |= A -> B |= B -> C | C -> D |
+        | A -> B | 幂等 | 无乱序 | 无乱序 |
+        | B -> C | B -> C 等待 A -> B 唤醒 | 幂等 | 无乱序 |
+        | C -> D | C -> D 等待 B -> C 唤醒 | C -> D 等待 B -> C 唤醒 | 幂等 |
+    end note
+    alt <font size = 16 color = blue> 是 <b>
+        sales -> sales : 生成延迟 30 分钟的 tsp 任务 [A -> B]
+        return 返回
+        note left
+            任务在某些定点回调执行: 0:30, 1:00, 1:30 ~~~, 22:00
+            如果消息过来时间已经超过 22:00，顺延到第二天的 0:30 执行
+        end note
+    else <font size = 16 color = blue> 否 <b>
+        sales -> sales : 生成时间在 20 号的 tsp 任务 [A -> B]
+    end
+
+
+    return 返回
+    return 返回
+
+    return 返回
+end
+
+[-> sales : TSP 任务 [A -> B] 回调
+
+sales -> sales : 检查是否满足执行条件
+note left
+    1.当天的 DP 任务是否完成
+end note
+
+return 返回
+
+sales -> es : 使用 root_kdt_id 和 shopping_guide_id 查询 shopping_guide_base_order 索引
+return 返回
+
+alt <font size = 16 color = blue> 无任何数据 <b>
+    return 说明导购域 在可视范围内无任何需要更新的数据 返回
+else <font size = 16 color = blue> 有数据 <b>
+
+    group retail_manage
+        sales -> sales : 开始 retail_manage 数据库更新
+        sales -> es : \n 分页查询订单号 orderNos
+        return 返回
+        sales -> sales : 使用订单号批量更新 achievement_order commission_order invitation_order 的 shopping_guide_id 字段
+        note left
+            使用 root_kdt_id 和 oldUserId
+            查询 shopping_guide_base_order 索引
+            oldUserId 包括:
+            shopping_guide_id
+            service_shopping_guide_id,
+            invitation_shopping_guide_id
+        end note
+        return 返回
+        sales -> mi : 记录该订单号，准备最后修改 base_order 的导购 id
+        note left
+            unique key : orderNo + taskKey
+        end note
+        return 返回
+        return 返回
+    end
+
+    group salesman
+        sales -> sales : 开始 salesman 数据库更新
+        sales -> salesman : 使用 old_user_id hq_kdt_id 批量更新 sl_commission_sales_data
+        salesman -> salesman : 根据 id 更新
+        return 更新完成
+        return 返回
+        sales -> salesman : 使用 old_user_id hq_kdt_id 批量更新 sl_commission_biz_data
+        salesman -> salesman : 根据 id 更新
+        return 返回
+        return 返回
+        return 返回
+    end
+
+   group retail_finance
+        sales -> sales : 开始 retail_finance 数据库更新
+        sales -> performance : 使用 old_user_id hq_kdt_id 批量更新 perf_rule_result
+        performance -> performance : 根据 id 更新
+        return 更新完成
+        return 返回
+        sales -> performance : 使用 old_user_id hq_kdt_id 批量更新 perf_rule_result_detail
+        performance -> performance : 根据 id 更新
+        return 更新完成
+        return 返回
+        return 返回
+   end
+
+    group retail_manage
+           sales -> sales : 开始 retail_manage.shopping_guide_base_order 表数据更新
+           sales -> mi : \n 分页查询订单号 orderNos
+           return 返回
+           sales -> sales : 根据 订单号 更新
+           return 更新完成
+           return 返回
+      end
+
+   return 返回
+end
+
+@enduml

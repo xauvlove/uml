@@ -1,0 +1,51 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+
+actor "管理员" as admin
+Participant 前端 as front
+Participant GuideTaskWriteService as guideTaskWriteService
+Participant GuideTaskValidator as guideTaskValidator
+Participant GuideTaskRightChecker as guideTaskRightChecker
+Participant GuideTaskDomainService as guideTaskDomainService
+Participant GuideTaskRepository as guideTaskRepository
+
+admin -> front : 点击暂停
+
+front -> guideTaskWriteService : 暂停任务请求
+
+guideTaskWriteService -> guideTaskValidator : validate
+
+guideTaskWriteService -> guideTaskRightChecker : right check
+
+guideTaskWriteService -> guideTaskDomainService : 暂停任务
+
+group Transaction
+    guideTaskDomainService -> guideTaskRepository : status flow 任务流转至 已暂停
+end group
+
+
+
+@enduml

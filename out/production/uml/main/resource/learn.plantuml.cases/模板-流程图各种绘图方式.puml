@@ -1,0 +1,155 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2
+
+'响应信息文字显示在箭头下面
+'skinparam responseMessageBelowArrow true
+
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #6FC8F2
+
+'参与者边框颜色
+ParticipantBorderColor black
+
+'参与者背景颜色
+ParticipantBackgroundColor #6FC8F2
+
+'数据库背景颜色
+DatabaseBackgroundColor black
+
+'文字压缩格式，impact 代表文字是压缩显示的
+'ParticipantFontName Impact
+
+'参与者名称字体大小
+ParticipantFontSize 15
+
+'参与者名称字体颜色
+ParticipantFontColor black
+
+'actor 的背景颜色
+ActorBackgroundColor #6FC8F2
+
+'actor 的字体颜色
+ActorFontColor black
+
+'actor 的字体大小
+ActorFontSize 15
+
+'actor 的字体
+ActorFontName Aapex
+}
+
+box "外部" #LightBlue
+actor 用户 as user
+
+participant out [
+    =isv
+    ----
+    兑吧
+]
+
+end box
+
+'指定了参与者的背景颜色
+participant TKUserService as TKUserService order 10 #99FF99
+
+'order 是指定显示顺序，从左到右，数字越小越靠前
+participant 阿里妈妈 as Alimama order 10
+
+database TUserTaskItemRepository as TUserTaskItemRepository order 10
+
+
+== 查询推荐商品  ==
+
+user -> out : 查询商品1
+
+out -> TKUserService : 查询推荐商品，pageSize = topNum
+
+== 置顶商品逻辑  ==
+
+group 置顶商品逻辑
+    loop for i in 1..n
+        TKUserService -> TUserTaskItemRepository : 查询过往浏览过的商品列表 list
+        return lookedNum = ∑ list.size()
+    end loop
+end group
+
+== 校园操作完成，返回数据 ==
+
+return
+return
+
+
+
+
+'可以使用 newpage 将两个流程分成两张图
+'newpage
+
+'----------------------------------------------------------------------------------------------------------------------'
+
+
+'可以重新指定流程序号
+autonumber 1
+user -> out : 查询商品2
+
+out -> TKUserService : 查询推荐商品，pageSize = topNum
+group 置顶商品逻辑
+    loop for i in 1..n
+        '文字可以换行
+        TKUserService -> TUserTaskItemRepository : 查询过往浏览过的商品列表 list \n 可以使用换行符换行，现在的序号是：%autonumber%
+
+        note right of TKUserService
+            这里是注释 right
+        end note
+
+        hnote left of TKUserService
+            这里是注释 left
+            hnote 代表六边形
+            rnote 代表矩形
+        end note
+
+        note over of TKUserService
+            这里是注释 over
+        end note
+
+        note over TKUserService,TUserTaskItemRepository #FFAAAA
+            这里是注释 over between
+        end note
+
+        rnote across
+            跨所有参与者注释
+        end note
+
+        note across
+        表格
+        |= |= A -> B |= B -> C | C -> D |
+        | A -> B | 幂等 | 无乱序 | 无乱序 |
+        | B -> C | B -> C 等待 A -> B 唤醒 | 幂等 | 无乱序 |
+        | C -> D | C -> D 等待 B -> C 唤醒 | C -> D 等待 B -> C 唤醒 | 幂等 |
+        end note
+
+        return lookedNum = ∑ list.size()
+    end loop
+end group
+
+return
+return
+
+@enduml

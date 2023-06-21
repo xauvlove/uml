@@ -1,0 +1,41 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+
+
+left to right direction
+
+usecase 食品所需数据 as data
+
+usecase sku产品周期 as productPeriod
+note "生产日期，保质期\n【原】itemDO.getExtendsField()中获取 \n【现itemDO.skuList[ItemSkuDO]里面没有 \n【现】需开发" as note_productPeriod
+productPeriod .. note_productPeriod
+data ---> productPeriod
+
+usecase sku参数摘要 as skuParamAbstract
+note "高钙(90mg/100ml)，国际金奖(国际食品组织)，高蛋白(3.6g/100ml) \n【原】宝石路获取Item属性信息 \n"  as note_skuParamAbstract
+skuParamAbstract .. note_skuParamAbstract
+data ---> skuParamAbstract
+
+usecase sku营养成分 as nutrition
+note "【原】itemDO.getNutritionComponent() \n 【现】itemSkuDO.industryinfo 没数据" as note_nutrition
+nutrition .. note_nutrition
+data ---> nutrition
+
+usecase sku属性 as skuProperty
+note "【原】使用item级商品属性\n【现】sku级商品属性很少（只有销售属性），考虑sku和item属性合并?" as note_skuProperty
+skuProperty .. note_skuProperty
+data ---> skuProperty
+
+usecase sku生产资质 as skuProduceQua
+note "[原】itemDO.getAttributeExtra() \n 【现】使用item级生产资质？@小繁" as note_skuProduceQua
+skuProduceQua .. note_skuProduceQua
+data ---> skuProduceQua
+
+usecase sku组合装 as skuCombine
+note "[原】无" as note_skuCombine
+skuCombine .. note_skuCombine
+data ---> skuCombine
+
+
+@enduml

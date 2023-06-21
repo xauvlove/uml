@@ -1,0 +1,43 @@
+@startjson
+{
+  "orderTopicConf": null,
+  "queueDatas": [
+    {
+      "brokerName": "broker-a",
+      "readQueueNums": 4,
+      "writeQueueNums": 4,
+      "perm": 6
+    },
+    {
+      "brokerName": "broker-b",
+      "readQueueNums": 4,
+      "writeQueueNums": 4,
+      "perm": 6
+    }
+  ],
+  "brokerDatas": [
+    {
+      "brokerName": "broker-a",
+      "brokerAddrs": {
+        "MASTER": "192.168.0.1:10911",
+        "SLAVE": "192.168.0.2:10911"
+      },
+      "brokerId": 0,
+      "brokerAddr": "192.168.0.1:10911",
+      "version": 1
+    },
+    {
+      "brokerName": "broker-b",
+      "brokerAddrs": {
+        "MASTER": "192.168.0.3:10911",
+        "SLAVE": "192.168.0.4:10911"
+      },
+      "brokerId": 1,
+      "brokerAddr": "192.168.0.3:10911",
+      "version": 1
+    }
+  ],
+  "filterServerTable": null,
+  "brokersAddr": "192.168.0.1:10911;192.168.0.3:10911"
+}
+@endjson

@@ -1,0 +1,33 @@
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+skinparam backgroundColor #EEEBDC
+
+'使用 toy 主题
+!theme toy
+
+* 2022年 S2
+
+** 天猫校园
+
+*** 会员 && 认证
+**** 学生认证降本提效
+***** 机审3个迭代版本
+
+
+**** 会员应用迁移
+***** 数据迁移方案
+***** 应用拆分、业务迁移方案
+
+
+** 行业消费者运营
+*** 快消
+**** 护肤肤质结构档案
+
+
+*** 食品
+**** 食品支持多sku卖点及参数透出
+
+
+
+
+@endmindmap

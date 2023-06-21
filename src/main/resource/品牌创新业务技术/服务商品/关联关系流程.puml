@@ -1,0 +1,58 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+!theme toy
+
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 小二 as user
+participant 小二后台 as front
+participant 行业 as industry
+participant 交易 as trade
+participant IC as ic
+
+
+user -> front : 创建关联关系
+activate front
+group Transaction
+    front -> industry : 写入关联关系
+    activate industry
+    industry -> trade : 同步关联关系
+    activate trade
+    return
+    return
+end group
+return
+
+activate trade
+trade -> ic : 写入到 IC sku feature 上
+activate ic
+return
+
+
+
+@enduml

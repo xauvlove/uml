@@ -1,0 +1,203 @@
+@startuml
+
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+!theme toy
+
+'自动激活
+autoActivate on
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 用户 as user
+participant 创纪云 as saas
+participant MarketingActivityWriteService as MarketingActivityWriteService
+participant MarketingActivityReadService as MarketingActivityReadService
+participant MarketingActivityDomainService as MarketingActivityDomainService
+participant MarketingActivityAdapter as MarketingActivityAdapter
+participant MarketingActivitySyncService as MarketingActivitySyncService
+participant TmallCampusItemRepository as TmallCampusItemRepository
+participant MarketingActivityRepository as MarketingActivityRepository
+participant Umcc as Umcc
+participant 创纪云营销数据一致性方案 as SaasMarketingActivityChecker
+
+rnote across
+    目标：
+    1.saas 逻辑简单，流程编排简单
+    2.校园接口幂等
+    3.数据一致：由接口幂等和流程编排保证
+end note
+
+user -> saas : 更新活动
+
+saas -> saas : 内部逻辑
+note right of saas
+    数据检查等等
+end note
+
+saas -> MarketingActivityWriteService : 获取变更准入许可
+MarketingActivityWriteService -> MarketingActivityDomainService : 将活动状态变为修改中
+note right of MarketingActivityWriteService
+    并修改校园本地活动状态为：修改中
+end note
+MarketingActivityDomainService -> MarketingActivityRepository : 改变活动状态
+return
+return
+return
+return
+return 返回活动状态：发布中
+
+rnote across
+    更新时，异步调用仍然会返回全量信息
+    包括：活动信息、详情、圈品、排品
+    并且给一个新的 幂等 id
+
+     ** 校园仅做数据暂存，不保证和任何一方的数据一致 **
+end note
+
+->o saas : 异步调用
+
+saas -> MarketingActivityWriteService : 传入活动基本信息
+note right of saas
+    需要带本次幂等 id 和 上一次的幂等 id
+end note
+
+MarketingActivityWriteService -> MarketingActivityRepository : 保存
+return
+return
+
+saas -> MarketingActivityWriteService : 传入活动详情
+MarketingActivityWriteService -> MarketingActivityRepository : 保存
+return
+return
+
+saas -> MarketingActivityWriteService : 传入全量活动圈品
+note right of saas
+    圈品包括：
+    类目、品牌、tp品
+end note
+
+
+group Transaction
+    MarketingActivityWriteService -> MarketingActivityRepository : 保存圈品快照
+    note right of MarketingActivityWriteService
+        保存的商品快照，tp、类目、品牌
+    end note
+    return
+end group
+return
+
+saas -> MarketingActivityWriteService : 传入全量活动排品
+note right of saas
+    排品包括：
+    类目、品牌、tp品
+end note
+
+group Transaction
+    MarketingActivityWriteService -> MarketingActivityRepository : 保存排品快照
+    note right of MarketingActivityWriteService
+        保存的 tp 品、类目、品牌快照
+    end note
+    return
+end group
+return
+
+
+rnote across
+    saas 保证接口都调通了，并且返回 true，就可以发送 '确认' 请求
+
+    - 确认这个过程，可能出现的问题：
+    1.数据量太大，saas 等待超时：可以重新调用确认，会被分布式锁阻塞，saas 需要一直重试确认
+    2.数据量太大，校园调用 umcc 超时：对于 saas，校园是黑盒，校园自己解决内部超时问题，可使用多线程等
+    3.校园调 umcc，创建活动失败：设置重试机制，设置最高重试上限，有时可能遇到封网时间，umcc 无法设置任务
+
+end note
+saas -> MarketingActivityWriteService : 确认
+MarketingActivityWriteService -> MarketingActivityWriteService : 发出一个消息，用于开始往ump写活动
+note right of MarketingActivityWriteService
+    消息体：ActivityReadyMessage
+    带幂等 id
+end note
+return
+return
+return
+
+rnote across
+    使用异步消息回调的方式确保：
+    1.数据量过大，写 ump 耗时较长
+    2.【ump 已经保证接口和数据幂等】
+    3.saas 不断轮询活动的生效状态，直到生效成功或者失败。如果失败，重新发起 确认流程
+end note
+->o MarketingActivityDomainService : 异步消息回调
+MarketingActivityDomainService -> MarketingActivityRepository : 取出本次活动数据
+note right of MarketingActivityDomainService
+    根据幂等 id 取出
+    tp品、品牌、类目、门店等
+end note
+return
+
+MarketingActivityDomainService -> MarketingActivityRepository : 查询上一次的数据快照[tp品/品牌/类目]
+return
+
+MarketingActivityDomainService -> MarketingActivityDomainService : 比较差异
+note right of MarketingActivityDomainService
+    比较快照数据和 saas 传过来的全量数据的快照[tp品/品牌/类目]
+end note
+return
+
+MarketingActivityDomainService -> TmallCampusItemRepository : 查询门店品
+return
+
+group 分布式锁
+    MarketingActivityDomainService -> MarketingActivityAdapter : 不同活动类型进对应处理器
+    MarketingActivityAdapter -> Umcc : 修改活动
+    note right of MarketingActivityAdapter
+        圈品和排品的更新，废弃掉使原分组失效重建的方式
+        改用数据比对，然后进行增删操作
+    end note
+    return
+    return
+    MarketingActivityDomainService -> MarketingActivityRepository : 设置活动状态为生效中
+    return
+end group
+
+MarketingActivityDomainService -> MarketingActivityDomainService : 发出一个消息，表示活动已经变更完成
+note right of MarketingActivityDomainService
+    消息体：ActivitySuccessMessage
+    带活动 id
+end note
+return
+return
+
+group 数据同步给 saas，saas 做数据一致性校验
+     ->o MarketingActivitySyncService : 异步消息回调
+     MarketingActivitySyncService -> MarketingActivityRepository : 取出活动快照
+     return
+     MarketingActivitySyncService -> SaasMarketingActivityChecker : 异步发送给 saas，saas 做数据核对
+     return
+     return
+end group
+@enduml

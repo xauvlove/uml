@@ -1,0 +1,54 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+hide footbox
+skinparam backgroundColor #EEEBDC
+autoActivate on
+autonumber
+
+skinparam sequence {
+ArrowColor black
+ActorBorderColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor #8CCEF1
+
+ParticipantBorderColor black
+ParticipantBackgroundColor #8CCEF1
+'ParticipantFontName Impact
+ParticipantFontSize 15
+ParticipantFontColor black
+
+ActorBackgroundColor #8CCEF1
+ActorFontColor black
+ActorFontSize 15
+ActorFontName Aapex
+}
+
+actor 部门管理员 as admin
+Participant 前端 as front
+Participant ShoppingGuideTaskWebService as webService
+Participant TaskVisitStrategy as visitStrategy
+Participant ShoppingGuideTaskRepository as shoppingGuideTaskRepository
+Participant ShoppingGuideTaskExtRepository as shoppingGuideTaskExtRepository
+Participant ShoppingGuideTaskAssignIdemRepository as shoppingGuideTaskAssignIdemRepository
+Participant TaskDataChangeEvent as taskDataChangeEvent
+
+admin -> front : 创建任务
+front -> webService : 调用接口 createTask()
+webService -> visitStrategy : 使用 回访策略创建任务
+visitStrategy -> shoppingGuideTaskRepository : 创建任务主体
+return 返回
+
+visitStrategy -> shoppingGuideTaskExtRepository : 创建回访任务明细
+return 返回
+
+visitStrategy -> shoppingGuideTaskAssignIdemRepository : 幂等数据
+return 返回
+
+visitStrategy -> taskDataChangeEvent : 发送消息，用于创建下发层级任务和导购个人任务
+return 返回
+return 返回
+return 返回
+return 返回
+
+
+@enduml
