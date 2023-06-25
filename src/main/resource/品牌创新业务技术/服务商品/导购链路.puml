@@ -41,6 +41,7 @@ activate front
 group Transaction
     front -> industry : 写入关联关系
     activate industry
+    industry -> industry : 写本地
     industry -> trade : 同步关联关系
     activate trade
     return
