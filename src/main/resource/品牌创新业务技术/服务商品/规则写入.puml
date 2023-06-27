@@ -38,21 +38,13 @@ participant IC as ic
 
 user -> front : 创建关联关系
 activate front
-group Transaction
-    front -> industry : 写入关联关系
-    activate industry
-    industry -> industry : 写本地
-    industry -> trade : 同步关联关系
-    activate trade
-    return
-    return
-end group
+front -> industry : 写入关联关系
+activate industry
+industry -> industry : 写本地
+return
 return
 
-activate trade
-trade -> ic : 写入到 IC sku feature 上
-activate ic
-return
+
 
 
 
