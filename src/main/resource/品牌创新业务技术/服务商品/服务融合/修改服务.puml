@@ -29,38 +29,25 @@ skinparam sequence {
     ActorFontColor black
 }
 
-actor 用户 as user
-participant 详情 as detail
-participant 交易 as trade
+actor 小二 as user
+participant 工作台 as ws
 participant 行业 as industry
-participant 供应链服务 as supply
-participant IC as ic
+participant 供应链平台 as supply
 
-user -> detail : 进入详情页
-activate detail
+user -> ws : 修改服务内容
+activate ws
 
-detail -> trade : 进入下单页
-activate trade
-
-trade -> industry : 查询行业服务
+ws -> industry : （传 ServiceCode）更新：服务分组、名称、类目、管理员、黑白名单信息
 activate industry
-industry -> industry : 根据实物商品id查询绑定关系
-return
 
-trade -> supply : 查询供应链服务
+industry -> supply : 更新写入服务相关信息
 activate supply
-return
+return 返回
 
-group 定制点
-    trade -> trade : 服务互斥、排序
-end group
+industry -> industry : 更新管理相关信息，并保存 SSC_SupplyServiceCode
 return
 
 return
-
-
-
-
 
 
 @enduml

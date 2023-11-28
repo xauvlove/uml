@@ -29,38 +29,40 @@ skinparam sequence {
     ActorFontColor black
 }
 
-actor 用户 as user
-participant 详情 as detail
-participant 交易 as trade
+actor 小二 as user
+participant 工作台 as ws
 participant 行业 as industry
-participant 供应链服务 as supply
-participant IC as ic
+participant 供应链平台 as supply
 
-user -> detail : 进入详情页
-activate detail
+user -> ws : 查询服务内容
+activate ws
 
-detail -> trade : 进入下单页
-activate trade
-
-trade -> industry : 查询行业服务
+ws -> industry : 带查询条件查询服务内容列表
 activate industry
-industry -> industry : 根据实物商品id查询绑定关系
-return
 
-trade -> supply : 查询供应链服务
+industry -> industry : 参数校验
+
+industry -> supply : 条件查询列表
 activate supply
-return
+return 返回服务内容列表
 
-group 定制点
-    trade -> trade : 服务互斥、排序
-end group
 return
 
 return
 
 
+user -> ws : 查询服务详情
+activate ws
 
+ws -> industry : 带查询条件 ServiceCode查询服务内容列表
+activate industry
 
+industry -> supply : 使用 ServiceCode 查询服务详情
+activate supply
+return 返回数据
 
+return
+
+return
 
 @enduml

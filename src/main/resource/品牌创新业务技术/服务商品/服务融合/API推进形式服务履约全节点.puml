@@ -30,37 +30,39 @@ skinparam sequence {
 }
 
 actor 用户 as user
-participant 详情 as detail
+actor 服务商 as shop
 participant 交易 as trade
+participant SSC as ssc
 participant 行业 as industry
-participant 供应链服务 as supply
-participant IC as ic
 
-user -> detail : 进入详情页
-activate detail
-
-detail -> trade : 进入下单页
+user -> trade : 下单
 activate trade
 
-trade -> industry : 查询行业服务
-activate industry
-industry -> industry : 根据实物商品id查询绑定关系
+trade o--> ssc : 监听消息
+activate ssc
+
+ssc -> ssc : 创建工单，推进为待预约状态
+return
 return
 
-trade -> supply : 查询供应链服务
-activate supply
+ssc <--> ssc : 预约完成
+
+shop -> ssc : 推进状态：待派工
+activate ssc
 return
 
-group 定制点
-    trade -> trade : 服务互斥、排序
-end group
+shop -> ssc : 派工
+activate ssc
+ssc -> ssc : 推进状态待上门
 return
 
+-> ssc : 已上门
+activate ssc
 return
 
-
-
-
+shop -> ssc : 服务完成
+activate ssc
+return
 
 
 @enduml

@@ -1,0 +1,62 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+!theme toy
+
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 小二 as user
+participant 工作台 as ws
+participant 行业 as industry
+participant 供应链平台 as supply
+
+user -> ws : 创建服务内容
+activate ws
+
+ws -> industry : 写入：服务分组、名称、类目、管理员、黑白名单信息
+activate industry
+
+industry -> supply : 写入服务相关信息
+activate supply
+return 返回 SSC_SupplyServiceCode
+
+industry -> industry : 写入管理相关信息，并保存 SSC_SupplyServiceCode
+note right of industry
+    先写入 SSC，再写入行业
+    bad case1: SSC 写入失败，则整体阻断
+    bad case2: SSC 写入成功，响应超时，无法获取 ServiceCode，无展示&交易流程影响，只是两端数据不一致
+    bad case3: SSC 正常响应，行业写入失败，只影响管理员（小二）操作
+end note
+return
+
+return
+
+
+
+
+
+@enduml

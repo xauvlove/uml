@@ -1,0 +1,79 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+!theme toy
+
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+actor 用户 as user
+actor 服务商 as shop
+participant 交易 as trade
+participant SSC as ssc
+participant 行业 as industry
+
+user -> trade : 下单
+activate trade
+
+trade o--> ssc : 监听消息
+activate ssc
+
+ssc -> ssc : 创建工单，推进为待服务状态
+return
+return
+
+shop -> trade : 发货
+activate trade
+
+trade o--> ssc : 消息监听
+activate ssc
+ssc -> ssc : 创建工单，推进为服务中状态
+return
+return
+
+
+user -> industry : 服务完成
+activate industry
+industry -> trade : 调用收货接口
+
+return
+
+trade o--> ssc : 消息监听
+activate ssc
+ssc --> ssc : 推进工单状态为已完成
+return
+
+user -> industry : 查询服务详情
+activate industry
+
+industry -> ssc : 查询工单状态
+activate ssc
+return
+
+industry -> industry : 信息组装（逆向、商品等）
+return
+
+@enduml
