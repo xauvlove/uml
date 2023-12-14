@@ -4,10 +4,6 @@
 '隐藏脚注
 hide footbox
 
-'使用 toy 主题
-!theme toy
-
-
 '编号
 autonumber 1
 
@@ -18,14 +14,13 @@ hide unlinked
 skinparam sequenceMessageAlign left
 
 '箭头粗度
-skinparam sequenceArrowThickness 2.5
+skinparam sequenceArrowThickness 1.5
 
 ' 皮肤
 skinparam sequence {
-    LifeLineBackgroundColor #6FC8F2
-    ParticipantBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #white
     ParticipantFontColor black
-    ActorBackgroundColor #6FC8F2
+    ActorBackgroundColor white
     ActorFontColor black
 }
 
