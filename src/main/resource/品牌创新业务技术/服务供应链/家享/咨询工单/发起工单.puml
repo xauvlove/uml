@@ -1,0 +1,63 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 1
+
+' 皮肤
+skinparam sequence {
+    ParticipantBackgroundColor #white
+       ParticipantFontColor black
+       ActorBackgroundColor white
+       ActorFontColor black
+}
+
+actor 发起人 as admin
+participant ConsultationOrderWriteService as ConsultationOrderWriteService
+participant ConsultationOrderDomainService as ConsultationOrderDomainService
+participant ConsultationRuleDomainService as ConsultationRuleDomainService
+participant ConsultationOrderRepository as ConsultationOrderRepository
+
+
+admin -> ConsultationOrderWriteService : 发起咨询工单
+activate ConsultationOrderWriteService
+
+ConsultationOrderWriteService -> ConsultationOrderWriteService : 参数校验
+activate ConsultationOrderWriteService
+return
+
+ConsultationOrderWriteService -> ConsultationOrderDomainService : 发起
+activate ConsultationOrderDomainService
+
+ConsultationOrderDomainService -> ConsultationRuleDomainService : 重复性校验
+
+ConsultationOrderDomainService -> ConsultationRuleDomainService : 发起能力校验
+
+ConsultationOrderDomainService -> ConsultationOrderRepository : 持久化
+activate ConsultationOrderRepository
+
+return
+return
+return
+
+
+
+
+
+
+@enduml

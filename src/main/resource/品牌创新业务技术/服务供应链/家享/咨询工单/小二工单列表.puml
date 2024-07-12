@@ -1,0 +1,71 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 1
+
+' 皮肤
+skinparam sequence {
+    ParticipantBackgroundColor #white
+       ParticipantFontColor black
+       ActorBackgroundColor white
+       ActorFontColor black
+}
+
+actor 小二 as admin
+participant 家享工作台 as workbench
+participant ConsultationOrderReadService as consultationOrderReadService
+participant ConsultationOrderRepository as consultationOrderRepository
+participant WorkCardService as workCardService
+
+admin -> workbench : 条件筛选
+activate workbench
+
+workbench -> workbench : 筛选条件 sql
+activate workbench
+return
+
+workbench -> consultationOrderReadService : 调用
+activate consultationOrderReadService
+
+group Concurrent
+    consultationOrderReadService -> consultationOrderRepository : 查询工单数据
+    activate consultationOrderRepository
+    return
+end
+
+group Concurrent
+    consultationOrderReadService -> consultationOrderRepository : 查询工单列表
+    activate consultationOrderRepository
+    return
+
+    consultationOrderReadService -> workCardService : 查询工单
+    activate workCardService
+    return
+end
+
+consultationOrderReadService -> consultationOrderReadService : 数据组装
+return
+
+return
+
+
+
+
+
+@enduml

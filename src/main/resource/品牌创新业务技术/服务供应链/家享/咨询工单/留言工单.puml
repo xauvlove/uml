@@ -1,0 +1,68 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 1
+
+' 皮肤
+skinparam sequence {
+    ParticipantBackgroundColor #white
+       ParticipantFontColor black
+       ActorBackgroundColor white
+       ActorFontColor black
+}
+
+actor 角色 as admin
+participant 家享工作台或xp as bench
+participant ConsultationOrderWriteService as ConsultationOrderWriteService
+participant ConsultationOrderDomainService as ConsultationOrderDomainService
+participant ConsultationAbilityDomainService as ConsultationAbilityDomainService
+participant ConsultationRuleDomainService as ConsultationRuleDomainService
+participant ConsultationOrderRepository as ConsultationOrderRepository
+
+
+admin --> bench : 追加留言
+activate bench
+
+bench --> ConsultationOrderWriteService : 留言
+activate ConsultationOrderWriteService
+
+ConsultationOrderWriteService -> ConsultationOrderWriteService : 参数校验，是否已响应过，是否完结
+activate ConsultationOrderWriteService
+return
+
+ConsultationOrderWriteService -> ConsultationOrderDomainService : 留言
+activate ConsultationOrderDomainService
+
+ConsultationOrderDomainService -> ConsultationAbilityDomainService : 角色能力校验
+note right of ConsultationAbilityDomainService
+    1.商家发起，仅商家留言
+    2.小二发起，全部角色留言
+    3.服务商发起，仅服务商留言
+end note
+
+ConsultationOrderDomainService -> ConsultationOrderRepository : 持久化
+return
+return
+return
+
+
+
+
+
+@enduml

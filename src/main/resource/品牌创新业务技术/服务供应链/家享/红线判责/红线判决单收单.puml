@@ -1,0 +1,51 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 1
+
+' 皮肤
+skinparam sequence {
+    ParticipantBackgroundColor #white
+       ParticipantFontColor black
+       ActorBackgroundColor white
+       ActorFontColor black
+}
+
+actor 小二 as admin
+participant RedLineDecideListener as RedLineDecideListener
+participant RedLineDecideHandler as RedLineDecideHandler
+participant RedLineRepository as RedLineRepository
+
+->o RedLineDecideListener : 投诉单完结消息
+activate RedLineDecideListener
+
+RedLineDecideListener -> RedLineDecideHandler : 处理判决结果
+activate RedLineDecideHandler
+
+RedLineDecideHandler -> RedLineRepository : 红线问题匹配，保存判决结果
+activate RedLineRepository
+
+return
+return
+return
+
+
+
+
+@enduml
