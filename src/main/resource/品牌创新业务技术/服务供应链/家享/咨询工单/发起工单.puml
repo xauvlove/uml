@@ -31,7 +31,9 @@ actor 发起人 as admin
 participant ConsultationOrderWriteService as ConsultationOrderWriteService
 participant ConsultationOrderDomainService as ConsultationOrderDomainService
 participant ConsultationRuleDomainService as ConsultationRuleDomainService
+participant ConsultationOrderTagDomainService as ConsultationOrderTagDomainService
 participant ConsultationOrderRepository as ConsultationOrderRepository
+participant DelayTask as DelayTask
 
 
 admin -> ConsultationOrderWriteService : 发起咨询工单
@@ -48,9 +50,19 @@ ConsultationOrderDomainService -> ConsultationRuleDomainService : 重复性校�
 
 ConsultationOrderDomainService -> ConsultationRuleDomainService : 发起能力校验
 
+ConsultationOrderDomainService -> ConsultationOrderTagDomainService : 打标签
+
 ConsultationOrderDomainService -> ConsultationOrderRepository : 持久化
 activate ConsultationOrderRepository
 
+ConsultationOrderDomainService -> DelayTask : 发送延时任务：超时未响应
+activate DelayTask
+return
+
+ConsultationOrderDomainService -> DelayTask : 发送延时任务：超时未完结
+activate DelayTask
+
+return
 return
 return
 return

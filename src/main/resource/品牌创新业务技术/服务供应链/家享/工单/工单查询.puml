@@ -1,0 +1,61 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 1
+
+' 皮肤
+skinparam sequence {
+    ParticipantBackgroundColor #white
+       ParticipantFontColor black
+       ActorBackgroundColor white
+       ActorFontColor black
+}
+
+actor 查询角色 as admin
+participant WorkCardFacade as WorkCardFacade
+participant WorkCardService as WorkCardService
+participant ADB as adb
+
+admin -> WorkCardFacade : 查询工单列表
+activate WorkCardFacade
+
+WorkCardFacade -> WorkCardFacade : 构建基于角色查询条件
+
+WorkCardFacade -> WorkCardService : 查询工单
+activate WorkCardService
+
+WorkCardService -> adb : 查询 adb
+activate adb
+return
+
+WorkCardService -> WorkCardService : 构建工单VO通用模型
+
+return
+
+WorkCardFacade -> WorkCardFacade : 基于角色构建需求字段
+
+
+return
+
+
+
+
+
+
+@enduml

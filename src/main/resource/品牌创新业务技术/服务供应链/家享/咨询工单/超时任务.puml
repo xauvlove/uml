@@ -1,0 +1,60 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 1
+
+' 皮肤
+skinparam sequence {
+    ParticipantBackgroundColor #white
+       ParticipantFontColor black
+       ActorBackgroundColor white
+       ActorFontColor black
+}
+
+participant ConsultationOrderUnResponseTimeoutProcessor as ConsultationOrderUnResponseTimeoutProcessor
+participant ConsultationOrderUnCloseTimeoutProcessor as ConsultationOrderUnCloseTimeoutProcessor
+participant ConsultationOrderTagDomainService as ConsultationOrderTagDomainService
+participant DelayTask as DelayTask
+
+
+->o ConsultationOrderUnResponseTimeoutProcessor : 处理超时未响应
+activate ConsultationOrderUnResponseTimeoutProcessor
+
+ConsultationOrderUnResponseTimeoutProcessor -> ConsultationOrderTagDomainService : 打超时未响应标
+activate ConsultationOrderTagDomainService
+
+return
+return
+
+
+->o ConsultationOrderUnCloseTimeoutProcessor : 处理超时未响应
+activate ConsultationOrderUnCloseTimeoutProcessor
+
+ConsultationOrderUnCloseTimeoutProcessor -> ConsultationOrderTagDomainService : 打超时未完结标
+activate ConsultationOrderTagDomainService
+
+return
+return
+
+
+
+
+
+
+@enduml
