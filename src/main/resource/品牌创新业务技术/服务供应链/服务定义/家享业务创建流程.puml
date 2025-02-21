@@ -1,0 +1,95 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'隐藏脚注
+hide footbox
+
+'使用 toy 主题
+'使用 toy 主题
+!theme toy
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 2.5
+
+' 皮肤
+skinparam sequence {
+    LifeLineBackgroundColor #6FC8F2
+    ParticipantBackgroundColor #6FC8F2
+    ParticipantFontColor black
+    ActorBackgroundColor #6FC8F2
+    ActorFontColor black
+}
+
+
+'编号
+autonumber 1
+
+'隐藏孤立的参与者
+hide unlinked
+
+'文字对齐，向左对齐
+skinparam sequenceMessageAlign left
+
+'箭头粗度
+skinparam sequenceArrowThickness 1
+
+
+
+participant 前端 as front
+participant RecourseInstanceWriteService as RecourseInstanceWriteService
+participant RecourseTypeSelector as RecourseTypeSelector
+participant NBF_Flow_engine as nbf
+participant RecourseWriteService as RecourseWriteService
+participant RecourseDomainService as RecourseDomainService
+participant RecourseProcessorSelector as RecourseProcessorSelector
+participant RecourseProcessor as RecourseProcessor
+
+
+front -> RecourseInstanceWriteService: 调用业务接口
+activate RecourseInstanceWriteService
+
+RecourseInstanceWriteService -> RecourseTypeSelector : 获取业务流程图结构
+activate RecourseTypeSelector
+RecourseTypeSelector -> RecourseTypeSelector : 条件积木 & 条件 matcher 匹配业务流程
+return
+
+RecourseInstanceWriteService -> nbf : 驱动流程到下一节点
+activate nbf
+
+nbf -> RecourseWriteService : nbf 调用业务 hsf，执行业务逻辑
+activate RecourseWriteService
+
+RecourseWriteService -> RecourseDomainService : 执行领域服务/方法
+activate RecourseDomainService
+
+RecourseDomainService -> RecourseProcessorSelector : 获取多态的节点处理器 processor
+activate RecourseProcessorSelector
+
+RecourseProcessorSelector -> RecourseProcessorSelector : 根据流程图选择节点处理器
+return
+
+RecourseDomainService -> RecourseProcessor : 执行节点逻辑
+activate RecourseProcessor
+return
+
+return
+return
+return
+return
+
+
+
+
+
+
+
+@enduml
